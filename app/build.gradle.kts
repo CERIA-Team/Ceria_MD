@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -5,7 +8,9 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     id("androidx.navigation.safeargs")
 }
-
+val localProperties = Properties().apply {
+    load(FileInputStream(rootProject.file("local.properties")))
+}
 android {
     namespace = "com.ceria.capstone"
     compileSdk = 34
@@ -18,6 +23,16 @@ android {
         versionName = "1.0"
         manifestPlaceholders["redirectSchemeName"] = "spotify-sdk"
         manifestPlaceholders["redirectHostName"] = "auth"
+        buildConfigField(
+            "String",
+            "SPOTIFY_CLIENT_ID",
+            "\"${localProperties.getProperty("SPOTIFY_CLIENT_ID")}\""
+        )
+        buildConfigField(
+            "String",
+            "SPOTIFY_CLIENT_SECRET",
+            "\"${localProperties.getProperty("SPOTIFY_CLIENT_SECRET")}\""
+        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -62,6 +77,7 @@ dependencies {
     //Retrofit
     implementation(libs.retrofit)
     implementation(libs.logging.interceptor)
+    implementation(libs.converter.gson)
     //Spotify SDK
     implementation(libs.spotify.auth)
     implementation(files("../libs/spotify-app-remote-release-0.8.0.aar"))

@@ -25,8 +25,13 @@ abstract class BaseFragment<VB : ViewBinding>(
         super.onViewCreated(view, savedInstanceState)
         setupUI()
         setupListeners()
+        setupObservers()
     }
 
+    override fun onResume() {
+        handleIntent()
+        super.onResume()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -34,4 +39,6 @@ abstract class BaseFragment<VB : ViewBinding>(
 
     abstract fun setupUI()
     abstract fun setupListeners()
+    abstract fun setupObservers()
+    protected open fun handleIntent() {}
 }
