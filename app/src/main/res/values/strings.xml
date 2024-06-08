@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Ceria</string>
+    <string name="hello_user">Hello, %1$s</string>
+    <string name="listening_session">Listening Session</string>
+    <string name="view_details">View Details</string>
+    <string name="to_settings_page">To settings page</string>
+    <string name="profile">Profile</string>
+    <string name="liked_songs">Liked Songs</string>
+    <string name="n_songs">%1$d songs</string>
 </resources>

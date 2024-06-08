@@ -4,8 +4,9 @@
         <item name="colorPrimary">@color/ceria_pink</item>
         <item name="colorAccent">@color/ceria_pink</item>
         <item name="android:windowBackground">@color/dark_bg</item>
-<!--        <item name="android:textColorPrimary">@color/white</item>-->
-<!--        <item name="android:textColor">@color/white</item>-->
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:colorSecondary">@color/secondary_dark</item>
     </style>
 
     <style name="Theme.Ceria" parent="Base.Theme.Ceria" />
