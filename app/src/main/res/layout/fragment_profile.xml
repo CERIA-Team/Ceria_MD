@@ -73,6 +73,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_display_name" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_liked"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -84,7 +85,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_email_address"
         app:strokeColor="?android:colorPrimary"
-        app:strokeWidth="1dp" >
+        app:strokeWidth="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

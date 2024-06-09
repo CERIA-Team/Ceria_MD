@@ -10,11 +10,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     override fun setupListeners() {
-        binding.CardViewLiked.setOnClickListener() {
-            findNavController().navigate(R.id.likedFragment)
-        }
-        binding.setting.setOnClickListener() {
-            findNavController().navigate(R.id.settingFragment)
+        with(binding) {
+            cardLiked.setOnClickListener {
+                findNavController().navigate(R.id.likedFragment)
+            }
+            ibSettings.setOnClickListener {
+                findNavController().navigate(R.id.settingFragment)
+            }
         }
     }
 
