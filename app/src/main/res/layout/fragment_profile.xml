@@ -46,7 +46,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
-        tools:src="@tools:sample/avatars" />
+        app:srcCompat="@drawable/sample_profile"
+        tools:src="@drawable/sample_profile" />
 
     <TextView
         android:id="@+id/tv_display_name"
