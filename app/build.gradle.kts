@@ -86,6 +86,8 @@ dependencies {
     implementation(libs.timber)
     //Glide
     implementation(libs.glide)
+    //Splash Screen
+    implementation(libs.androidx.core.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

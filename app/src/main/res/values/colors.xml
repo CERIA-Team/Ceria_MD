@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="dark_bg">#05051E</color>
     <color name="ceria_pink">#DE1760</color>
+    <color name="secondary_dark">#1E1E34</color>
     <color name="gray">#BFBFBF</color>
     <color name="blue_dark">#1E1E34</color>
 </resources>

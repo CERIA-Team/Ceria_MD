@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">Ceria</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_user">Hello, %1$s</string>
+    <string name="listening_session">Listening Session</string>
+    <string name="view_details">View Details</string>
+    <string name="to_settings_page">To settings page</string>
+    <string name="profile">Profile</string>
+    <string name="liked_songs">Liked Songs</string>
+    <string name="n_songs">%1$d songs</string>
+    <string name="onboarding_description">New way for working out and listening to fantastic music at the same time.</string>
+    <string name="motto_2">Listen.</string>
+    <string name="motto_1">Practice.</string>
+    <string name="get_started">Get Started!</string>
+    <string name="login_with_spotify">Login with Spotify</string>
+    <string name="spotify_not_found">Spotify client is not installed</string>
+    <string name="install_now">Install Now</string>
+    <string name="onboarding_welcome">Welcome to Ceria!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="stopsessiontext">Stop Session</string>
     <string name="titlealbum">Title Song</string>
