@@ -7,7 +7,7 @@ import android.view.ViewTreeObserver
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -17,7 +17,6 @@ import com.ceria.capstone.R
 import com.ceria.capstone.databinding.ActivityMainBinding
 import com.ceria.capstone.utils.gone
 import com.ceria.capstone.utils.visible
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -26,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
             val navController = navHost.navController
             bottomNav.setupWithNavController(navController)
-            navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            navController.addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
                     R.id.loginFragment -> {
                         bottomBar.gone()
@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                         navController.navigate(R.id.homeFragment)
                         true
                     }
+
                     R.id.profileFragment -> {
                         navController.navigate(R.id.profileFragment)
                         true
@@ -94,6 +95,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             fabPlay.setOnClickListener {
+                bottomNav.menu.setGroupCheckable(0, true, false)
+                for (i in 0 until bottomNav.menu.size()) {
+                    bottomNav.menu.getItem(i).isChecked = false
+                }
+                bottomNav.menu.setGroupCheckable(0, true, true)
                 navController.navigate(R.id.listeningFragment)
             }
         }

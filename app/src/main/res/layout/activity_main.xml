@@ -53,7 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:backgroundTint="#1E1E34"
+        android:backgroundTint="?android:colorSecondary"
         app:contentInsetStart="0dp"
         app:fabAlignmentMode="center"
         app:fabAlignmentModeEndMargin="0dp"
@@ -70,8 +70,6 @@
             app:itemTextColor="@color/nav_color"
             app:labelVisibilityMode="unlabeled"
             app:menu="@menu/menu_bottom_navbar">
-
-
         </com.google.android.material.bottomnavigation.BottomNavigationView>
     </com.google.android.material.bottomappbar.BottomAppBar>
 
@@ -82,10 +80,10 @@
         android:importantForAccessibility="no"
         android:scaleType="center"
         app:backgroundTint="?android:colorPrimary"
-        app:fabSize="auto"
         app:fabCustomSize="64dp"
-        app:maxImageSize="56dp"
+        app:fabSize="auto"
         app:layout_anchor="@id/bottom_bar"
+        app:maxImageSize="56dp"
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
         app:srcCompat="@drawable/circled_play_icon"
         app:tint="@color/white" />
