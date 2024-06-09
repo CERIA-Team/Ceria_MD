@@ -34,4 +34,40 @@
         android:id="@+id/action_global_profileFragment"
         app:destination="@id/profileFragment"
         app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/listeningFragment"
+        android:name="com.ceria.capstone.ui.listening.ListeningFragment"
+        android:label="fragment_listening"
+        tools:layout="@layout/fragment_listening" />
+    <action
+        android:id="@+id/action_global_listeningFragment"
+        app:destination="@id/listeningFragment"
+        app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="com.ceria.capstone.ui.summary.SummaryFragment"
+        android:label="fragment_summary"
+        tools:layout="@layout/fragment_summary" />
+    <action
+        android:id="@+id/action_global_summaryFragment"
+        app:destination="@id/summaryFragment"
+        app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/likedFragment"
+        android:name="com.ceria.capstone.ui.liked.LikedFragment"
+        android:label="fragment_liked"
+        tools:layout="@layout/fragment_liked" />
+    <action
+        android:id="@+id/action_global_likedFragment"
+        app:destination="@id/likedFragment"
+        app:launchSingleTop="true" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.ceria.capstone.ui.setting.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_liked" />
+    <action
+        android:id="@+id/action_global_settingFragment"
+        app:destination="@id/settingFragment"
+        app:launchSingleTop="true" />
 </navigation>
