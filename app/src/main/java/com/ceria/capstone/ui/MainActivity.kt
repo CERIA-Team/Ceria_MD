@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -16,25 +18,28 @@ import com.ceria.capstone.R
 import com.ceria.capstone.databinding.ActivityMainBinding
 import com.ceria.capstone.utils.gone
 import com.ceria.capstone.utils.visible
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         with(binding) {
             ViewCompat.setOnApplyWindowInsetsListener(main) { v, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
                 insets
             }
+
             ViewCompat.setOnApplyWindowInsetsListener(
                 bottomBar
             ) { v: View?, _: WindowInsetsCompat? ->
@@ -42,6 +47,7 @@ class MainActivity : AppCompatActivity() {
                     v!!, WindowInsetsCompat.CONSUMED
                 )
             }
+
             bottomBar.isClickable = false
             val navHost =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -63,14 +69,9 @@ class MainActivity : AppCompatActivity() {
                         bottomBar.viewTreeObserver.addOnGlobalLayoutListener(object :
                             ViewTreeObserver.OnGlobalLayoutListener {
                             override fun onGlobalLayout() {
-                                // Remove the listener to avoid multiple calls
                                 bottomBar.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                                // Now get the height
                                 val bottomAppBarHeight = bottomBar.height
                                 Timber.d("BottomAppBar height: $bottomAppBarHeight")
-
-                                // Update navHostFragment margin
                                 navHostFragment.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                                     bottomMargin = bottomAppBarHeight
                                 }
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             bottomNav.setOnItemSelectedListener {
                 when (it.itemId) {
                     R.id.homeFragment -> {
@@ -91,9 +93,27 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     else -> false
-
                 }
+            }
+            fabPlay.setOnClickListener {
+                navController.navigate(R.id.listeningFragment)
+            }
+        }
+
+
+        onBackPressedDispatcher.addCallback(this) {
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val navController = navHostFragment.navController
+            if (navController.currentDestination?.id == R.id.homeFragment ||
+                navController.currentDestination?.id == R.id.profileFragment ||
+                navController.currentDestination?.id == R.id.listeningFragment
+            ) {
+                finish()
+            } else {
+                navController.popBackStack()
             }
         }
     }
+
 }

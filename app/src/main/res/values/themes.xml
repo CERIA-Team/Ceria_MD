@@ -9,6 +9,26 @@
         <item name="android:colorSecondary">@color/secondary_dark</item>
     </style>
 
+    <style name="MySearchViewTheme" parent="Widget.AppCompat.SearchView">
+        <item name="android:background">@color/gray</item>
+        <!-- Changes icons color -->
+        <item name="android:colorForeground">@color/white</item>
+    </style>
+
+    <style name="cornershape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">30dp</item>
+        <item name="color">@color/white</item>
+    </style>
+    <style name="profilshape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">100%</item>
+    </style>
+    <style name="SwitchTheme" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="colorControlActivated">@color/ceria_pink</item>
+        <item name="android:height">2dp</item>
+    </style>
+
     <style name="Theme.Ceria" parent="Base.Theme.Ceria" />
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">

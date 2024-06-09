@@ -71,6 +71,7 @@ dependencies {
     //Navigation UI
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.cardview)
     //Hilt
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
