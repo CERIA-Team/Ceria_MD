@@ -19,8 +19,8 @@
     <string name="stopsessiontext">Stop Session</string>
     <string name="titlealbum">Title Song</string>
     <string name="groupalbum">Group Song</string>
-    <string name="timestart">1:41</string>
-    <string name="textbpm1">"Boring for this track "</string>
+    <string name="timestart">0:00</string>
+    <string name="textbpm1">"Bored of this track "</string>
     <string name="textbpm2">Next Track - Next Artist</string>
     <string name="bpmtext">90 bpm</string>
     <string name="textstopsession1">Fantastic workout!</string>

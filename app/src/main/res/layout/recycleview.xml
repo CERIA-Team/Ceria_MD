@@ -64,12 +64,13 @@
             tools:text="@string/album" />
 
         <ToggleButton
-            android:id="@+id/toogle_favorite"
+            android:id="@+id/toggle_favorite"
             android:layout_width="24dp"
             android:layout_height="22dp"
             android:layout_margin="20dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/favorite_toogle"
+            android:background="@drawable/favorite_icon"
+            android:backgroundTint="@color/toggle_button_tint"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:padding="40dp"

@@ -145,9 +145,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             val pm: PackageManager = requireActivity().packageManager
             try {
                 pm.getPackageInfo("com.spotify.music", 0)
-                tvInstallSpotify.invisible()
+                layoutSpotifyNotFound.invisible()
             } catch (e: PackageManager.NameNotFoundException) {
-                tvInstallSpotify.visible()
+                layoutSpotifyNotFound.visible()
             }
         }
     }
