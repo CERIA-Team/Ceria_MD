@@ -65,7 +65,13 @@
         android:id="@+id/settingFragment"
         android:name="com.ceria.capstone.ui.setting.SettingFragment"
         android:label="fragment_setting"
-        tools:layout="@layout/fragment_liked" />
+        tools:layout="@layout/fragment_liked" >
+        <action
+            android:id="@+id/action_settingFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/settingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <action
         android:id="@+id/action_global_settingFragment"
         app:destination="@id/settingFragment"

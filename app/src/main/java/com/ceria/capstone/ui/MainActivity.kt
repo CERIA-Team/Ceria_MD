@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             bottomNav.setupWithNavController(navController)
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
-                    R.id.loginFragment -> {
+                    R.id.loginFragment,R.id.settingFragment -> {
                         bottomBar.gone()
                         fabPlay.gone()
                         navHostFragment.updateLayoutParams<ViewGroup.MarginLayoutParams> {
