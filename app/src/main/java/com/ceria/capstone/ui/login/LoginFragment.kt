@@ -179,9 +179,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         with(binding) {
             if (isLoading) {
                 btnLogin.invisible()
-                progressBar.visible()
+                pbLogin.visible()
             } else {
-                progressBar.invisible()
+                pbLogin.invisible()
                 btnLogin.visible()
             }
         }

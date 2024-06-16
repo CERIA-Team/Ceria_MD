@@ -23,7 +23,6 @@ import timber.log.Timber
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -50,10 +49,11 @@ class MainActivity : AppCompatActivity() {
             val navHost =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
             val navController = navHost.navController
+            bottomNav.menu.getItem(1).isEnabled = false
             bottomNav.setupWithNavController(navController)
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
-                    R.id.loginFragment,R.id.settingFragment -> {
+                    R.id.loginFragment -> {
                         bottomBar.gone()
                         fabPlay.gone()
                         navHostFragment.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -79,45 +79,29 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            bottomNav.setOnItemSelectedListener {
-                when (it.itemId) {
-                    R.id.homeFragment -> {
-                        navController.navigate(R.id.homeFragment)
-                        true
-                    }
-
-                    R.id.profileFragment -> {
-                        navController.navigate(R.id.profileFragment)
-                        true
-                    }
-
-                    else -> false
-                }
-            }
             fabPlay.setOnClickListener {
-                bottomNav.menu.setGroupCheckable(0, true, false)
-                for (i in 0 until bottomNav.menu.size()) {
-                    bottomNav.menu.getItem(i).isChecked = false
-                }
-                bottomNav.menu.setGroupCheckable(0, true, true)
-                navController.navigate(R.id.listeningFragment)
+                bottomNav.menu.getItem(1).isEnabled = true
+                bottomNav.selectedItemId = R.id.listeningFragment
+                bottomNav.menu.getItem(1).isEnabled = false
             }
         }
-
-
         onBackPressedDispatcher.addCallback(this) {
             val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
             val navController = navHostFragment.navController
-            if (navController.currentDestination?.id == R.id.homeFragment ||
-                navController.currentDestination?.id == R.id.profileFragment ||
-                navController.currentDestination?.id == R.id.listeningFragment
+            if (navController.currentDestination?.id == R.id.homeFragment
+//                || navController.currentDestination?.id == R.id.profileFragment
+//                || navController.currentDestination?.id == R.id.listeningFragment
             ) {
                 finish()
             } else {
-                navController.popBackStack()
+                if (!navController.popBackStack()) {
+                    finish()
+                }
             }
         }
+
     }
 
 }
+

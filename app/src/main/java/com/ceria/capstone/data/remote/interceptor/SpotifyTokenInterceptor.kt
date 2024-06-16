@@ -15,7 +15,15 @@ class SpotifyTokenInterceptor(
     @Throws(Exception::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        var response = chain.proceed(request)
+        val currentToken = runBlocking {
+            sessionManager.spotifyAccessToken.firstOrNull()
+        }
+        val authenticatedRequest = if (!currentToken.isNullOrEmpty()) {
+            request.newBuilder().header("Authorization", "Bearer $currentToken").build()
+        } else {
+            request
+        }
+        var response = chain.proceed(authenticatedRequest)
 
         if (response.code == 401) {
             val refreshToken = runBlocking {
@@ -42,7 +50,6 @@ class SpotifyTokenInterceptor(
                     response.close()
                     response = chain.proceed(newRequest)
 
-                    // Optionally update the token in DataStore
                     runBlocking {
                         sessionManager.setSpotifyAccessToken(newAccessToken)
                     }
