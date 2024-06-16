@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
 
             fabPlay.setOnClickListener {
                 bottomNav.menu.getItem(1).isEnabled = true
-                bottomNav.selectedItemId = R.id.listeningFragment
+                bottomNav.selectedItemId = R.id.session
                 bottomNav.menu.getItem(1).isEnabled = false
             }
         }

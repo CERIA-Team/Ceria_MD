@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_main"
     app:startDestination="@id/loginFragment">
+    <include app:graph="@navigation/session" />
 
     <fragment
         android:id="@+id/loginFragment"
@@ -18,7 +19,11 @@
         android:id="@+id/homeFragment"
         android:name="com.ceria.capstone.ui.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ceria.capstone.ui.profile.ProfileFragment"
@@ -31,20 +36,6 @@
             android:id="@+id/action_profileFragment_to_likedFragment"
             app:destination="@id/likedFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/listeningFragment"
-        android:name="com.ceria.capstone.ui.listening.ListeningFragment"
-        android:label="fragment_listening"
-        tools:layout="@layout/fragment_listening" >
-        <action
-            android:id="@+id/action_listeningFragment_to_summaryFragment"
-            app:destination="@id/summaryFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/summaryFragment"
-        android:name="com.ceria.capstone.ui.summary.SummaryFragment"
-        android:label="fragment_summary"
-        tools:layout="@layout/fragment_summary" />
     <fragment
         android:id="@+id/likedFragment"
         android:name="com.ceria.capstone.ui.liked.LikedFragment"
@@ -61,4 +52,9 @@
             app:popUpTo="@id/navigation_main"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.ceria.capstone.ui.detail.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" />
 </navigation>

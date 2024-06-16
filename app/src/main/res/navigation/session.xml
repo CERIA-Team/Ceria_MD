@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/session"
+    app:startDestination="@id/monitorFragment">
+
+    <fragment
+        android:id="@+id/monitorFragment"
+        android:name="com.ceria.capstone.ui.monitor.MonitorFragment"
+        android:label="fragment_monitor"
+        tools:layout="@layout/fragment_monitor" >
+        <action
+            android:id="@+id/action_monitorFragment_to_listeningFragment"
+            app:destination="@id/listeningFragment"
+            app:popUpTo="@id/monitorFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/listeningFragment"
+        android:name="com.ceria.capstone.ui.listening.ListeningFragment"
+        android:label="fragment_listening"
+        tools:layout="@layout/fragment_listening" >
+        <action
+            android:id="@+id/action_listeningFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="com.ceria.capstone.ui.summary.SummaryFragment"
+        android:label="fragment_summary"
+        tools:layout="@layout/fragment_summary" />
+</navigation>
