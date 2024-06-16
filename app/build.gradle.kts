@@ -33,6 +33,21 @@ android {
             "SPOTIFY_CLIENT_SECRET",
             "\"${localProperties.getProperty("SPOTIFY_CLIENT_SECRET")}\""
         )
+        buildConfigField(
+            "String",
+            "CERIA_API_BASE_URL",
+            "\"${localProperties.getProperty("CERIA_API_BASE_URL")}\""
+        )
+        buildConfigField(
+            "String",
+            "SPOTIFY_API_BASE_URL",
+            "\"${localProperties.getProperty("SPOTIFY_API_BASE_URL")}\""
+        )
+        buildConfigField(
+            "String",
+            "SPOTIFY_AUTH_BASE_URL",
+            "\"${localProperties.getProperty("SPOTIFY_AUTH_BASE_URL")}\""
+        )
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -43,8 +58,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -69,6 +83,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
     //Navigation UI
+    implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.cardview)
@@ -88,6 +103,8 @@ dependencies {
     implementation(libs.glide)
     //Splash Screen
     implementation(libs.androidx.core.splashscreen)
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

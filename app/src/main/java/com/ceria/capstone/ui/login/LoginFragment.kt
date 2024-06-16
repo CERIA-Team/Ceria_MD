@@ -10,7 +10,9 @@ import com.ceria.capstone.BuildConfig
 import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentLoginBinding
 import com.ceria.capstone.ui.common.BaseFragment
+import com.ceria.capstone.utils.gone
 import com.ceria.capstone.utils.invisible
+import com.ceria.capstone.utils.toastLong
 import com.ceria.capstone.utils.visible
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
@@ -29,16 +31,16 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             when (response.type) {
                 AuthorizationResponse.Type.CODE -> {
                     Timber.d(response.code)
-                    viewModel.getAccessToken(response.code, "ceriaauthresponse://callback")
+                    viewModel.login(response.code, "ceriaauthresponse://callback")
                 }
 
                 AuthorizationResponse.Type.ERROR -> {
-                    showLoading(false)
+                    showButtonLoading(false)
                     Timber.e("Auth error: " + response.error)
                 }
 
                 else -> {
-                    showLoading(false)
+                    showButtonLoading(false)
                     Timber.e("Unknown authorization response type : ${response.type}")
                 }
             }
@@ -53,6 +55,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         checkSpotifyClient()
     }
 
+    override fun initData() {
+        viewModel.checkToken()
+    }
 
     override fun setupListeners() {
         with(binding) {
@@ -80,29 +85,47 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 val intent =
                     AuthorizationClient.createLoginActivityIntent(requireActivity(), request)
                 loginActivityResultLauncher.launch(intent)
-                showLoading(true)
+                showButtonLoading(true)
             }
         }
     }
 
     override fun setupObservers() {
-        viewModel.tokenResponse.observe(viewLifecycleOwner) {
+        viewModel.loginResponse.observe(viewLifecycleOwner) {
             when (it) {
                 Result.Empty -> {
-                    showLoading(false)
+                    showButtonLoading(false)
                 }
 
                 is Result.Error -> {
-                    showLoading(false)
+                    requireContext().toastLong(it.error)
+                    showButtonLoading(false)
                 }
 
                 Result.Loading -> {
-                    showLoading(true)
+                    showButtonLoading(true)
                 }
 
                 is Result.Success -> {
-                    //TODO("SIMPAN TOKEN DI SHAREDPREF ATAU BACKEND?")
                     findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+                }
+            }
+        }
+        with(binding) {
+            viewModel.tokenResponse.observe(viewLifecycleOwner) {
+                when (it) {
+                    Result.Empty, is Result.Error -> {
+                        loginLayout.visible()
+                        loadingLayout.gone()
+                    }
+                    Result.Loading -> {
+                        loginLayout.gone()
+                        loadingLayout.visible()
+                    }
+
+                    is Result.Success -> {
+                        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+                    }
                 }
             }
         }
@@ -115,7 +138,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
             val response = AuthorizationResponse.fromUri(uri)
             response?.let { handleAuthorizationResponse(it) }
         } else {
-            showLoading(false)
+            showButtonLoading(false)
         }
     }
 
@@ -123,18 +146,18 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         when (response.type) {
             AuthorizationResponse.Type.CODE -> {
                 Timber.d("Authorization code: ${response.code}")
-                viewModel.getAccessToken(
+                viewModel.login(
                     response.code, "ceriaauthresponse://callback"
                 )
             }
 
             AuthorizationResponse.Type.ERROR -> {
-                showLoading(false)
+                showButtonLoading(false)
                 Timber.e("Authorization error: ${response.error}")
             }
 
             else -> {
-                showLoading(false)
+                showButtonLoading(false)
                 Timber.e("Unknown authorization response type : ${response.type}")
             }
         }
@@ -152,13 +175,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         }
     }
 
-    private fun showLoading(isLoading: Boolean) {
+    private fun showButtonLoading(isLoading: Boolean) {
         with(binding) {
             if (isLoading) {
                 btnLogin.invisible()
-                progressBar.visible()
+                pbLogin.visible()
             } else {
-                progressBar.invisible()
+                pbLogin.invisible()
                 btnLogin.visible()
             }
         }

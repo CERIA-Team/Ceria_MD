@@ -100,7 +100,7 @@ class ListeningFragment :
                 }
             })
             stopsession.setOnClickListener {
-                findNavController().navigate(R.id.summaryFragment)
+                findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment)
             }
             imageplaysong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.playerState?.setResultCallback { playerState ->
