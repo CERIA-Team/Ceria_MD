@@ -19,8 +19,8 @@
     <string name="stopsessiontext">Stop Session</string>
     <string name="titlealbum">Title Song</string>
     <string name="groupalbum">Group Song</string>
-    <string name="timestart">1:41</string>
-    <string name="textbpm1">"Boring for this track "</string>
+    <string name="timestart">0:00</string>
+    <string name="textbpm1">"Bored of this track?"</string>
     <string name="textbpm2">Next Track - Next Artist</string>
     <string name="bpmtext">90 bpm</string>
     <string name="textstopsession1">Fantastic workout!</string>
@@ -31,10 +31,10 @@
     <string name="songsplayed2">20</string>
     <string name="avgheartrate">Avg Heartrate</string>
     <string name="avgheartrate2">90</string>
-    <string name="avgheartrate3">Bpm</string>
+    <string name="avgheartrate3">bpm</string>
     <string name="duration">Duration</string>
     <string name="duration2">80</string>
-    <string name="duration3">Minutes</string>
+    <string name="duration3">minutes</string>
     <string name="recyclestop">You’ve just listened to</string>
     <string name="overlaytext">Keep the beats going! We\'ll be here with more music anytime</string>
     <string name="back">Back</string>
@@ -45,4 +45,6 @@
     <string name="dark_mode">Mode Theme</string>
     <string name="language">Language</string>
     <string name="logout">Logout</string>
+    <string name="increment_bpm">Increment bpm</string>
+    <string name="decrement_bpm">Decrement bpm</string>
 </resources>
