@@ -11,12 +11,17 @@ import com.bumptech.glide.Glide
 import com.ceria.capstone.R
 import com.ceria.capstone.data.room.FavoriteEntity
 import com.ceria.capstone.ui.liked.LikedViewModel
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import android.widget.Filter
+import android.widget.Filterable
 
 class LikedAdapter(
-    private val favoriteList: List<FavoriteEntity>,
+    private var favoriteList: List<FavoriteEntity>,
     private val likedViewModel: LikedViewModel,
     private val onToggleFavorite: (FavoriteEntity) -> Unit
-) : RecyclerView.Adapter<LikedAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<LikedAdapter.ViewHolder>(), Filterable {
+
+    private var filteredFavoriteList: List<FavoriteEntity> = favoriteList
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgItemPhoto: ImageView = itemView.findViewById(R.id.img_item_photo)
@@ -44,7 +49,7 @@ class LikedAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val favorite = favoriteList[position]
+        val favorite = filteredFavoriteList[position]
         holder.bind(favorite)
 
         holder.toggleFavorite.isChecked = true
@@ -54,5 +59,26 @@ class LikedAdapter(
         }
     }
 
-    override fun getItemCount(): Int = favoriteList.size
+    override fun getItemCount(): Int = filteredFavoriteList.size
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charString = constraint?.toString() ?: ""
+                filteredFavoriteList = if (charString.isEmpty()) {
+                    favoriteList
+                } else {
+                    favoriteList.filter {
+                        it.username.contains(charString, ignoreCase = true)
+                    }
+                }
+                return FilterResults().apply { values = filteredFavoriteList }
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                filteredFavoriteList = results?.values as List<FavoriteEntity>
+                notifyDataSetChanged()
+            }
+        }
+    }
 }

@@ -57,4 +57,15 @@
         android:name="com.ceria.capstone.ui.detail.DetailFragment"
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" />
+    <fragment
+        android:id="@+id/addsongFragment"
+        android:name="com.ceria.capstone.ui.addsong.AddSongFragment"
+        android:label="fragment_addsong"
+        tools:layout="@layout/fragment_add_song">
+        <action
+            android:id="@+id/action_addsongFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/navigation_main"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

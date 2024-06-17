@@ -47,4 +47,5 @@
     <string name="logout">Logout</string>
     <string name="increment_bpm">Increment bpm</string>
     <string name="decrement_bpm">Decrement bpm</string>
+    <string name="find_music">Find in liked songs</string>
 </resources>
