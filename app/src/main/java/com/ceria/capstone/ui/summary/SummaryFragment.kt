@@ -1,19 +1,26 @@
 package com.ceria.capstone.ui.summary
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.ceria.capstone.data.roomsummary.SummaryEntity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ceria.capstone.databinding.FragmentSummaryBinding
+import com.ceria.capstone.domain.adapter.SummaryAdapter
 import com.ceria.capstone.ui.common.BaseFragment
 
 class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBinding::inflate) {
-
     private val viewModel: SummaryViewModel by viewModels()
     private lateinit var sessionId: String
+    private lateinit var summaryAdapter: SummaryAdapter
 
     override fun setupUI() {
-        // Setup UI elements if needed
+        // Setup RecyclerView
+        binding.rvStopsession.layoutManager = LinearLayoutManager(requireContext())
+        summaryAdapter = SummaryAdapter(emptyList()) // Initialize with empty list
+        binding.rvStopsession.adapter = summaryAdapter
+
+        // Get sessionId from arguments
         arguments?.let {
             sessionId = it.getString("SESSION_ID", "")
         }
@@ -25,16 +32,13 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
 
     override fun setupObservers() {
         // Observe LiveData from ViewModel
-        viewModel.getSummaryBySessionId(sessionId).observe(viewLifecycleOwner, Observer { summaryEntity ->
-            // Update UI with summaryEntity data
-            binding.name.text = summaryEntity.sessionId
-            binding.name2.text = summaryEntity.artists
-
-            // Example of handling imageUrls (splitting and loading images)
-            val imageUrlList = summaryEntity.imageUrls.split(",")
-            // Load images based on imageUrlList
-
-            // Handle other UI updates as needed
+        viewModel.getSummaryBySessionId(sessionId).observe(viewLifecycleOwner, Observer { summaryEntities ->
+            // Filter out duplicates based on album names and artists
+            summaryEntities?.let {
+                val uniqueSummaries = it.distinctBy { entity -> entity.albumNames + entity.artists }
+                summaryAdapter.setSummaryEntities(uniqueSummaries)
+                Log.d("SummaryFragment", "Received summaryEntities: $uniqueSummaries")
+            }
         })
     }
 

@@ -12,7 +12,7 @@ interface SummaryDao {
     suspend fun insert(song: SummaryEntity)
 
     @Query("SELECT * FROM song WHERE sessionId = :sessionId")
-    fun getSummaryBySessionId(sessionId: String): LiveData<SummaryEntity>
+    fun getSummaryBySessionId(sessionId: String): LiveData<List<SummaryEntity>>
     @Query("DELETE FROM song")
     suspend fun deleteAll()
 
