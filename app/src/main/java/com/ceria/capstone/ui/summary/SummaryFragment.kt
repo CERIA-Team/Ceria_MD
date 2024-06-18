@@ -43,7 +43,7 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
                     entity.albumNames + entity.artists
                 }
 
-                val totalCount = filteredEntities.size
+                val totalCount = uniqueSummaries.size
                 Log.d("SummaryFragment", "Total count of valid unique entities: $totalCount")
                 binding.songsplayed.text = totalCount.toString()
 
