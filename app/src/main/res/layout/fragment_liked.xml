@@ -59,45 +59,12 @@
                 android:layout_marginHorizontal="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/ceria_pink"
+                android:layout_marginBottom="10dp"
                 app:queryHint="@string/find_music"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/CardViewLiked"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="6dp"
-                app:cardBackgroundColor="@color/blue_dark"
-                app:cardCornerRadius="6dp"
-                app:strokeWidth="0dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginVertical="20dp"
-                    android:paddingBottom="0dp">
-
-                    <TextView
-                        android:id="@+id/addsong"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="0dp"
-                        android:drawableStart="@drawable/plus"
-                        android:text="@string/textaddsongs"
-                        android:textAlignment="textStart"
-                        android:drawablePadding="10dp"
-                        android:textColor="@color/white"
-                        android:layout_margin="20dp"
-                        android:textSize="24sp"
-                        tools:ignore="MissingConstraints" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_liked"

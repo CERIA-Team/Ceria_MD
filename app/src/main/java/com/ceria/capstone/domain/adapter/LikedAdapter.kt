@@ -9,9 +9,8 @@ import android.widget.ToggleButton
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ceria.capstone.R
-import com.ceria.capstone.data.room.FavoriteEntity
+import com.ceria.capstone.data.roomfavorite.FavoriteEntity
 import com.ceria.capstone.ui.liked.LikedViewModel
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import android.widget.Filter
 import android.widget.Filterable
 

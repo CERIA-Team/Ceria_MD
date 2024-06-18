@@ -35,9 +35,6 @@ class LikedFragment : Fragment(R.layout.fragment_liked) {
         binding.setting.setOnClickListener {
             findNavController().navigate(R.id.settingFragment)
         }
-        binding.addsong.setOnClickListener {
-            findNavController().navigate(R.id.addsongFragment)
-        }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

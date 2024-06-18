@@ -1,5 +1,6 @@
 package com.ceria.capstone.ui.listening
 
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.SeekBar
@@ -23,6 +24,7 @@ import timber.log.Timber
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+import java.util.UUID
 
 class ListeningFragment :
     BaseFragment<FragmentListeningBinding>(FragmentListeningBinding::inflate) {
@@ -35,6 +37,7 @@ class ListeningFragment :
     private val viewModel: ListeningViewModel by viewModels()
     private var currentTrack: Track? = null
     var _isChecked = false
+    private var sessionId: String = ""
 
     override fun setupUI() {
         with(binding) {
@@ -54,6 +57,11 @@ class ListeningFragment :
                             remote.playerApi.subscribeToPlayerState().setEventCallback {
                                 currentTrack = it.track
                                 updateFavoriteToggleState()
+
+                                if (sessionId.isEmpty()) {
+                                    sessionId = generateSessionId(currentTrack?.uri ?: "")
+                                }
+
                                 val track = it.track
                                 titlealbum.text = track.name
                                 titlealbum.isSelected = true
@@ -112,7 +120,9 @@ class ListeningFragment :
                 }
             })
             stopsession.setOnClickListener {
-                findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment)
+                val bundle = Bundle()
+                bundle.putString("SESSION_ID", sessionId)
+                findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment, bundle)
             }
             imageplaysong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.playerState?.setResultCallback { playerState ->
@@ -174,6 +184,7 @@ class ListeningFragment :
     private fun updateFavoriteToggleState() {
         currentTrack?.let { track ->
             val id = track.uri.hashCode()
+            viewModel.insertSong(track, sessionId)
             CoroutineScope(Dispatchers.IO).launch {
                 val count = viewModel.checkUser(id)
                 withContext(Dispatchers.Main) {
@@ -208,6 +219,10 @@ class ListeningFragment :
         }
     }
 
+    private fun generateSessionId(trackUri: String): String {
+        // Example: Generate session ID using UUID
+        return UUID.randomUUID().toString()
+    }
     private fun formatMilliseconds(ms: Long): String =
         String.format(Locale.getDefault(), "%02d:%02d", (ms / 1000) / 60, (ms / 1000) % 60)
 }

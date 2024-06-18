@@ -1,4 +1,4 @@
-package com.ceria.capstone.data.room
+package com.ceria.capstone.data.roomfavorite
 
 import android.os.Parcelable
 import androidx.room.Entity

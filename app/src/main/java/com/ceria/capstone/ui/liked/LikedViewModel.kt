@@ -4,10 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.ceria.capstone.data.room.FavoriteDao
-import com.ceria.capstone.data.room.FavoriteDatabase
-import com.ceria.capstone.data.room.FavoriteEntity
-import kotlinx.coroutines.Dispatchers
+import com.ceria.capstone.data.roomfavorite.FavoriteDao
+import com.ceria.capstone.data.roomfavorite.FavoriteDatabase
+import com.ceria.capstone.data.roomfavorite.FavoriteEntity
 import kotlinx.coroutines.launch
 
 class LikedViewModel(application: Application) : AndroidViewModel(application) {
