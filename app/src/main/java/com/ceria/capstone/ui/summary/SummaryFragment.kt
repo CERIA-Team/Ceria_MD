@@ -15,9 +15,8 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
     private lateinit var summaryAdapter: SummaryAdapter
 
     override fun setupUI() {
-        // Setup RecyclerView
         binding.rvStopsession.layoutManager = LinearLayoutManager(requireContext())
-        summaryAdapter = SummaryAdapter(emptyList()) // Initialize with empty list
+        summaryAdapter = SummaryAdapter(emptyList())
         binding.rvStopsession.adapter = summaryAdapter
 
         // Get sessionId from arguments
@@ -33,11 +32,25 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
     override fun setupObservers() {
         // Observe LiveData from ViewModel
         viewModel.getSummaryBySessionId(sessionId).observe(viewLifecycleOwner, Observer { summaryEntities ->
-            // Filter out duplicates based on album names and artists
-            summaryEntities?.let {
-                val uniqueSummaries = it.distinctBy { entity -> entity.albumNames + entity.artists }
+            summaryEntities?.let { entities ->
+                // Filter out entities with null albumNames and artists
+                val filteredEntities = entities.filter { entity ->
+                    !entity.albumNames.isNullOrBlank() && !entity.artists.isNullOrBlank()
+                }
+
+                // Remove duplicates based on albumNames and artists
+                val uniqueSummaries = filteredEntities.distinctBy { entity ->
+                    entity.albumNames + entity.artists
+                }
+
+                val totalCount = uniqueSummaries.size
+                Log.d("SummaryFragment", "Total count of valid unique entities: $totalCount")
+                binding.songsplayed.text = totalCount.toString()
+
                 summaryAdapter.setSummaryEntities(uniqueSummaries)
                 Log.d("SummaryFragment", "Received summaryEntities: $uniqueSummaries")
+
+
             }
         })
     }
