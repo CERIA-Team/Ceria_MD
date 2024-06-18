@@ -6,13 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-
     android:layout_marginTop="4dp"
-
+    android:layout_marginBottom="6dp"
     card_view:cardBackgroundColor="@color/blue_dark"
     card_view:strokeColor="@color/ceria_pink"
     card_view:strokeWidth="2dp"
-    android:layout_marginBottom="6dp"
     card_view:cardCornerRadius="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,56 +33,53 @@
 
         <TextView
             android:id="@+id/tv_item_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
-            android:layout_toEndOf="@id/img_item_photo"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="14sp"
             android:textStyle="bold"
-            card_view:layout_constraintStart_toEndOf="@+id/img_item_photo"
+            card_view:layout_constraintStart_toEndOf="@id/img_item_photo"
             card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@id/toggle_favorite"
             tools:text="@string/artist" />
 
         <TextView
             android:id="@+id/tv_item_album"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
-            android:layout_marginEnd="8dp"
-            android:layout_toEndOf="@id/img_item_photo"
-            android:gravity="center_vertical"
-            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
             android:textColor="@color/white"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="14sp"
+            card_view:layout_constraintStart_toEndOf="@id/img_item_photo"
             card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/img_item_photo"
-            card_view:layout_constraintTop_toTopOf="@id/tv_item_name"
+            card_view:layout_constraintTop_toBottomOf="@id/tv_item_name"
+            card_view:layout_constraintEnd_toStartOf="@id/toggle_favorite"
             tools:text="@string/album" />
 
         <ToggleButton
             android:id="@+id/toggle_favorite"
             android:layout_width="24dp"
             android:layout_height="22dp"
-            android:layout_margin="20dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/favorite_icon"
             android:backgroundTint="@color/toggle_button_tint"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:padding="40dp"
-            android:paddingLeft="150dp"
-            android:textColor="@color/white"
             android:textOff=""
             android:textOn=""
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintHorizontal_bias="0.936"
-            card_view:layout_constraintStart_toEndOf="@+id/tv_item_name"
             card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintVertical_bias="0.232" />
-
+            card_view:layout_constraintVertical_bias="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

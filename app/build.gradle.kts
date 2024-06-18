@@ -6,7 +6,9 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt)
+    id("kotlin-parcelize")
     id("androidx.navigation.safeargs")
+
 }
 val localProperties = Properties().apply {
     load(FileInputStream(rootProject.file("local.properties")))
@@ -87,6 +89,11 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.cardview)
+    implementation("androidx.room:room-runtime:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
+    ksp("androidx.room:room-compiler:2.5.2")
+
+    implementation(libs.androidx.ui.desktop)
     //Hilt
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
