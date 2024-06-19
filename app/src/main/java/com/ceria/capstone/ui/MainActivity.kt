@@ -26,7 +26,7 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity() {
                             override fun onGlobalLayout() {
                                 bottomBar.viewTreeObserver.removeOnGlobalLayoutListener(this)
                                 val bottomAppBarHeight = bottomBar.height
-                                Timber.d("BottomAppBar height: $bottomAppBarHeight")
                                 navHostFragment.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                                     bottomMargin = bottomAppBarHeight
                                 }
