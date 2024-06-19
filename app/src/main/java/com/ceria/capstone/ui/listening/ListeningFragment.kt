@@ -28,6 +28,7 @@ import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 import java.util.UUID
+import kotlin.math.roundToLong
 
 @AndroidEntryPoint
 class ListeningFragment :
@@ -39,14 +40,6 @@ class ListeningFragment :
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
     private val viewModel: ListeningViewModel by viewModels()
-    private val args: ListeningFragmentArgs by navArgs()
-    private var previousTrack: Track? = null
-    override fun initData() {
-        viewModel.setCurrentHeartRate(args.initialBpm)
-    }
-//     private var currentTrack: Track? = null
-//     var _isChecked = false
-//     private var sessionId: String = ""
 
     override fun setupUI() {
         with(binding) {
@@ -125,6 +118,7 @@ class ListeningFragment :
                                 } else {
                                     imageplaysong.setImageResource(R.drawable.pause_icon)
                                 }
+
                             }
                         }
                     }
@@ -166,12 +160,6 @@ class ListeningFragment :
                 }
             })
             stopsession.setOnClickListener {
-                spotifyAppRemote?.playerApi?.pause()
-                SpotifyAppRemote.disconnect(spotifyAppRemote)
-                findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment)
-//                 val bundle = Bundle()
-//                 bundle.putString("SESSION_ID", sessionId)
-//                 findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment, bundle)
             }
             imageplaysong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.playerState?.setResultCallback { playerState ->
