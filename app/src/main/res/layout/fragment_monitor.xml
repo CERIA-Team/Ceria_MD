@@ -4,15 +4,104 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.monitor.MonitorFragment" >
+    tools:context=".ui.monitor.MonitorFragment">
 
     <Button
         android:id="@+id/btn_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:layout_marginBottom="64dp"
+        android:includeFontPadding="false"
+        android:paddingLeft="48dp"
+        android:paddingTop="8dp"
+        android:paddingRight="48dp"
+        android:paddingBottom="8dp"
+        android:text="I'm Ready"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/monitorCircle"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="281dp"
+        android:background="@drawable/circle_outline_shape"
+        app:layout_constraintBottom_toTopOf="@+id/btn_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_listening_bpm"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/bpm_monitor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:text="70"
+            android:textAlignment="center"
+            android:textColor="?colorPrimary"
+            android:textSize="32sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4" />
+
+        <TextView
+            android:id="@+id/tv_bpm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:includeFontPadding="false"
+            android:text="bpm"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bpm_monitor" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_listening_bpm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:fontFamily="@font/poppins_bold"
+        android:text="@string/listening_to_your_heartbeat"
+        android:textAlignment="center"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ib_decrement"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_shape"
+        android:contentDescription="@string/decrement_bpm"
+        android:padding="8dp"
+        android:src="@drawable/ic_remove"
+        app:layout_constraintBottom_toBottomOf="@+id/monitorCircle"
+        app:layout_constraintEnd_toStartOf="@+id/monitorCircle"
+        app:layout_constraintTop_toTopOf="@+id/monitorCircle" />
+
+    <ImageButton
+        android:id="@+id/ib_increment"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/circle_shape"
+        android:contentDescription="@string/increment_bpm"
+        android:padding="8dp"
+        android:src="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="@+id/monitorCircle"
+        app:layout_constraintStart_toEndOf="@+id/monitorCircle"
+        app:layout_constraintTop_toTopOf="@+id/monitorCircle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

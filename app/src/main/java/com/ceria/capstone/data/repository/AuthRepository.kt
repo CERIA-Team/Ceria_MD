@@ -23,7 +23,8 @@ class AuthRepository @Inject constructor(
 ) : IAuthRepository {
     override suspend fun checkToken(): LiveData<Result<String>> = liveData {
         emit(Result.Loading)
-        if (sessionManager.ceriaToken.first().isNullOrEmpty() ||
+        if (
+//            sessionManager.ceriaToken.first().isNullOrEmpty() ||
             sessionManager.spotifyAccessToken.first().isNullOrEmpty() ||
             sessionManager.spotifyRefreshToken.first().isNullOrEmpty()
         ) {
@@ -47,8 +48,8 @@ class AuthRepository @Inject constructor(
                 BuildConfig.SPOTIFY_CLIENT_ID,
                 BuildConfig.SPOTIFY_CLIENT_SECRET
             )
-            val ceriaAuthResponse = ceriaApiService.auth(spotifyAuthResponse.accessToken)
-            sessionManager.setCeriaToken(ceriaAuthResponse.token)
+//            val ceriaAuthResponse = ceriaApiService.auth(spotifyAuthResponse.accessToken)
+//            sessionManager.setCeriaToken(ceriaAuthResponse.token)
             sessionManager.setSpotifyAccessToken(spotifyAuthResponse.accessToken)
             sessionManager.setSpotifyRefreshToken(spotifyAuthResponse.refreshToken)
             emit(Result.Success(SpotifyTokenDTO(spotifyAuthResponse)))

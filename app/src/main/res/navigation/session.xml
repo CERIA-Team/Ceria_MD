@@ -13,7 +13,7 @@
         <action
             android:id="@+id/action_monitorFragment_to_listeningFragment"
             app:destination="@id/listeningFragment"
-            app:popUpTo="@id/monitorFragment"
+            app:popUpTo="@id/session"
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
@@ -23,7 +23,12 @@
         tools:layout="@layout/fragment_listening" >
         <action
             android:id="@+id/action_listeningFragment_to_summaryFragment"
-            app:destination="@id/summaryFragment" />
+            app:destination="@id/summaryFragment"
+            app:popUpTo="@id/session"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="initialBpm"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/summaryFragment"
