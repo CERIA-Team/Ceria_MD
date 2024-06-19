@@ -49,4 +49,5 @@
     <string name="decrement_bpm">Decrement bpm</string>
     <string name="listening_to_your_heartbeat">Listening to your heartbeat</string>
     <string name="error_when_starting_session">Error when starting session</string>
+    <string name="find_music">Find in liked songs</string>
 </resources>
