@@ -15,6 +15,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private val viewModel: ProfileViewModel by viewModels()
     override fun initData() {
         viewModel.getProfile()
+        viewModel.getFavoriteSongs()
     }
 
     override fun setupUI() {
@@ -57,6 +58,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                             )
                         ).into(ivProfile)
                     }
+                }
+            }
+        }
+        viewModel.countFavorite.observe(viewLifecycleOwner) {
+            when (it) {
+                Result.Empty -> {}
+                is Result.Error -> {}
+                Result.Loading -> {}
+                is Result.Success -> {
+                    binding.tvLikedCount.text = getString(R.string.n_songs, it.data.size)
                 }
             }
         }

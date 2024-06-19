@@ -50,4 +50,6 @@
     <string name="listening_to_your_heartbeat">Listening to your heartbeat</string>
     <string name="error_when_starting_session">Error when starting session</string>
     <string name="find_music">Find in liked songs</string>
+    <string name="played_n_songs">Played %1$d songs</string>
+    <string name="session_id">Session %1$s</string>
 </resources>

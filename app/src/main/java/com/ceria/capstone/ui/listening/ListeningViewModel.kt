@@ -59,9 +59,9 @@ class ListeningViewModel @Inject constructor(
 }
 // import android.app.Application
 // import androidx.lifecycle.AndroidViewModel
-// import com.ceria.capstone.data.roomfavorite.FavoriteDao
-// import com.ceria.capstone.data.roomfavorite.FavoriteDatabase
-// import com.ceria.capstone.data.roomfavorite.FavoriteEntity
+// import com.ceria.capstone.data.local.room.FavoriteDao
+// import com.ceria.capstone.data.local.room.FavoriteDatabase
+// import com.ceria.capstone.data.local.room.FavoriteEntity
 // import com.ceria.capstone.data.roomsummary.SummaryDao
 // import com.ceria.capstone.data.roomsummary.SummaryDatabase
 // import com.ceria.capstone.data.roomsummary.SummaryEntity

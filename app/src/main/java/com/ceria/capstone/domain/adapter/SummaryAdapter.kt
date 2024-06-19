@@ -17,15 +17,15 @@
 //import kotlinx.coroutines.launch
 //import kotlinx.coroutines.withContext
 //
-//class SummaryAdapter(private var summaryEntities: List<SummaryEntity>, private val viewModel:SummaryViewModel) : RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder>() {
+//class SongAdapter(private var summaryEntities: List<SummaryEntity>, private val viewModel:SummaryViewModel) : RecyclerView.Adapter<SongAdapter.SongViewHolder>() {
 //
 //
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummaryViewHolder {
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
 //        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycleview, parent, false)
-//        return SummaryViewHolder(view)
+//        return SongViewHolder(view)
 //    }
 //
-//    override fun onBindViewHolder(holder: SummaryViewHolder, position: Int) {
+//    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
 //        val summaryEntity = summaryEntities[position]
 //        holder.bind(summaryEntity)
 //    }
@@ -39,7 +39,7 @@
 //        notifyDataSetChanged()
 //    }
 //
-//    inner class SummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//    inner class SongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 //        private val nameTextView: TextView = itemView.findViewById(R.id.tv_item_name)
 //        private val artistTextView: TextView = itemView.findViewById(R.id.tv_item_album)
 //        private val imageView: ImageView = itemView.findViewById(R.id.img_item_photo)

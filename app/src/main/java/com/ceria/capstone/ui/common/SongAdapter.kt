@@ -1,4 +1,4 @@
-package com.ceria.capstone.ui.summary
+package com.ceria.capstone.ui.common
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,17 +8,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ceria.capstone.R
-import com.ceria.capstone.databinding.RecycleviewBinding
+import com.ceria.capstone.databinding.ItemSongsBinding
 import com.ceria.capstone.domain.model.SongDTO
 
-class SummaryAdapter() : ListAdapter<SongDTO, SummaryAdapter.SummaryViewHolder>(DIFF_UTIL) {
+class SongAdapter(
+    private val addFavorite: (SongDTO) -> Unit,
+    private val removeFavorite: (SongDTO) -> Unit
+) :
+    ListAdapter<SongDTO, SongAdapter.SongViewHolder>(DIFF_UTIL) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummaryViewHolder {
-        val binding = RecycleviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SummaryViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
+        val binding = ItemSongsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SongViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SummaryViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
         val item = getItem(position)
         with(holder.binding) {
             tvItemName.text = item.title
@@ -34,10 +38,19 @@ class SummaryAdapter() : ListAdapter<SongDTO, SummaryAdapter.SummaryViewHolder>(
                     root.context, R.drawable.placeholder_song
                 )
             ).into(imgItemPhoto)
+            toggleFavorite.setOnCheckedChangeListener(null)
+            toggleFavorite.isChecked = item.isLiked
+            toggleFavorite.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    addFavorite(item)
+                } else {
+                    removeFavorite(item)
+                }
+            }
         }
     }
 
-    inner class SummaryViewHolder(val binding: RecycleviewBinding) :
+    inner class SongViewHolder(val binding: ItemSongsBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     companion object {

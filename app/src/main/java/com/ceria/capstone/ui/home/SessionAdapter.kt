@@ -1,14 +1,16 @@
-package com.ceria.capstone.ui.home.adapter
+package com.ceria.capstone.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ceria.capstone.R
 import com.ceria.capstone.databinding.ItemSessionBinding
+import com.ceria.capstone.domain.model.SessionDTO
 
-class SessionAdapter() :
-    ListAdapter<String, SessionAdapter.SessionViewHolder>(DIFF_UTIL) {
+class SessionAdapter(private val onClickDetail: (String) -> Unit) :
+    ListAdapter<SessionDTO, SessionAdapter.SessionViewHolder>(DIFF_UTIL) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
         val binding = ItemSessionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -17,8 +19,12 @@ class SessionAdapter() :
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val item = getItem(position)
-        with(holder.binding){
-
+        with(holder.binding) {
+            tvSessionId.text = root.context.getString(R.string.session_id, item.id)
+            tvNSongs.text = root.context.getString(R.string.played_n_songs, item.songCount)
+            tvViewDetails.setOnClickListener {
+                onClickDetail.invoke(item.id)
+            }
         }
     }
 
@@ -26,12 +32,12 @@ class SessionAdapter() :
         RecyclerView.ViewHolder(binding.root)
 
     companion object {
-        val DIFF_UTIL = object : DiffUtil.ItemCallback<String>() {
-            override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+        val DIFF_UTIL = object : DiffUtil.ItemCallback<SessionDTO>() {
+            override fun areItemsTheSame(oldItem: SessionDTO, newItem: SessionDTO): Boolean {
                 return oldItem == newItem
             }
 
-            override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+            override fun areContentsTheSame(oldItem: SessionDTO, newItem: SessionDTO): Boolean {
                 return oldItem == newItem
             }
         }

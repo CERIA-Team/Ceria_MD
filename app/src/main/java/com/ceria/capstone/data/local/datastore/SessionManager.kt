@@ -1,4 +1,4 @@
-package com.ceria.capstone.data.local
+package com.ceria.capstone.data.local.datastore
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

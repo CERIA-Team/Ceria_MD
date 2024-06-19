@@ -5,16 +5,17 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentSummaryBinding
+import com.ceria.capstone.domain.model.SongDTO
 import com.ceria.capstone.ui.common.BaseFragment
+import com.ceria.capstone.ui.common.SongAdapter
 import com.ceria.capstone.utils.toastLong
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBinding::inflate) {
     private val viewModel: SummaryViewModel by viewModels()
     private val args: SummaryFragmentArgs by navArgs()
-    private lateinit var summaryAdapter: SummaryAdapter
+    private lateinit var songAdapter: SongAdapter
 //    private var sessionDurationMinutes: Long = 0
 
     override fun initData() {
@@ -22,14 +23,13 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
     }
 
     override fun setupUI() {
-        binding.rvStopsession.layoutManager = LinearLayoutManager(requireContext())
-
-        summaryAdapter = SummaryAdapter()
-        binding.rvStopsession.adapter = summaryAdapter
+        binding.rvSongs.layoutManager = LinearLayoutManager(requireContext())
+        songAdapter = SongAdapter(::addSongToFavorite, ::removeSongFromFavorite)
+        binding.rvSongs.adapter = songAdapter
 //=======
 //>>>>>>> Stashed changes
-//        summaryAdapter = SummaryAdapter(emptyList(),viewModel)
-//        binding.rvStopsession.adapter = summaryAdapter
+//        songAdapter = SongAdapter(emptyList(),viewModel)
+//        binding.rvStopsession.adapter = songAdapter
 
         // Get sessionId and sessionDuration from arguments
 //        arguments?.let {
@@ -39,8 +39,7 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
 //>>>>>>> d496628957a59956f658224fba5756676fb00558
     }
 
-    override fun setupListeners() {
-    }
+    override fun setupListeners() {}
 
     override fun setupObservers() {
 //<<<<<<< Updated upstream
@@ -52,10 +51,10 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
                     requireActivity().toastLong("Empty")
 //=======
 //>>>>>>> Stashed changes
-        // Display session duration in minutes
+                    // Display session duration in minutes
 //        binding.duration.text = extractFirstDigit(sessionDurationMinutes)
 
-        // Observe LiveData from ViewModel
+                    // Observe LiveData from ViewModel
 //        viewModel.getSummaryBySessionId(sessionId).observe(viewLifecycleOwner, Observer { summaryEntities ->
 //            summaryEntities?.let { entities ->
 //                // Filter out entities with null albumNames and artists
@@ -72,7 +71,7 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
                 Result.Loading -> {}
                 is Result.Success -> {
                     binding.songsplayed.text = it.data.size.toString()
-                    summaryAdapter.submitList(it.data)
+                    songAdapter.submitList(it.data)
                 }
             }
 //=======
@@ -80,7 +79,7 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
 //                Log.d("SummaryFragment", "Total count of valid unique entities: $totalCount")
 //                binding.songsplayed.text = totalCount.toString()
 //
-//                summaryAdapter.setSummaryEntities(uniqueSummaries)
+//                songAdapter.setSummaryEntities(uniqueSummaries)
 //                Log.d("SummaryFragment", "Received summaryEntities: $uniqueSummaries")
 //            }
 //        })
@@ -104,5 +103,13 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
 //            return fragment
 //>>>>>>> d496628957a59956f658224fba5756676fb00558
         }
+    }
+
+    private fun addSongToFavorite(song: SongDTO) {
+        viewModel.addSongToFavorite(song)
+    }
+
+    private fun removeSongFromFavorite(song: SongDTO) {
+        viewModel.removeSongFromFavorite(song)
     }
 }

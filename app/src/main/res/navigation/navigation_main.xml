@@ -56,7 +56,11 @@
         android:id="@+id/detailFragment"
         android:name="com.ceria.capstone.ui.detail.DetailFragment"
         android:label="fragment_detail"
-        tools:layout="@layout/fragment_detail" />
+        tools:layout="@layout/fragment_detail" >
+        <argument
+            android:name="listenSessionId"
+            app:argType="string" />
+    </fragment>
 
 
 </navigation>

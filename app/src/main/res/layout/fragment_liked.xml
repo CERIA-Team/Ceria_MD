@@ -70,7 +70,7 @@
                 android:id="@+id/rv_liked"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/recycleview" />
+                tools:listitem="@layout/item_songs" />
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

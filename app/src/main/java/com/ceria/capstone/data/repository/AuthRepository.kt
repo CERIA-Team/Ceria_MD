@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.ceria.capstone.BuildConfig
 import com.ceria.capstone.data.Result
-import com.ceria.capstone.data.local.SessionManager
+import com.ceria.capstone.data.local.datastore.SessionManager
 import com.ceria.capstone.data.remote.service.CeriaApiService
 import com.ceria.capstone.data.remote.service.SpotifyAuthService
 import com.ceria.capstone.domain.model.SpotifyTokenDTO

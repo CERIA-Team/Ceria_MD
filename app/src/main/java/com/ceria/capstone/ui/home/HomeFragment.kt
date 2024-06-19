@@ -1,13 +1,13 @@
 package com.ceria.capstone.ui.home
 
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ceria.capstone.R
 import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentHomeBinding
 import com.ceria.capstone.ui.MainActivity
 import com.ceria.capstone.ui.common.BaseFragment
-import com.ceria.capstone.ui.home.adapter.SessionAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,14 +17,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun initData() {
         viewModel.getProfile()
+        viewModel.getSessions()
     }
 
     override fun setupUI() {
         with(binding) {
-            sessionAdapter = SessionAdapter()
+            sessionAdapter = SessionAdapter(::viewDetail)
             rvHistorySession.layoutManager = LinearLayoutManager(requireContext())
             rvHistorySession.adapter = sessionAdapter
-            sessionAdapter.submitList(listOf("A", "B", "C", "D", "E", "F"))
         }
     }
 
@@ -48,6 +48,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 }
             }
         }
+        viewModel.sessions.observe(viewLifecycleOwner) {
+            when (it) {
+                Result.Empty -> {}
+                is Result.Error -> {}
+                Result.Loading -> {}
+                is Result.Success -> {
+                    sessionAdapter.submitList(it.data)
+                }
+            }
+        }
     }
 
+    private fun viewDetail(id: String) {
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailFragment(id))
+    }
 }

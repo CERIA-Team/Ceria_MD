@@ -1,37 +1,35 @@
 package com.ceria.capstone.ui.liked
 
-import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ceria.capstone.R
+import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentLikedBinding
-import com.ceria.capstone.domain.adapter.LikedAdapter
-import androidx.appcompat.widget.SearchView
-import androidx.navigation.fragment.findNavController
+import com.ceria.capstone.domain.model.SongDTO
+import com.ceria.capstone.ui.common.BaseFragment
+import com.ceria.capstone.ui.common.SongAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
-class LikedFragment : Fragment(R.layout.fragment_liked) {
+@AndroidEntryPoint
+class LikedFragment : BaseFragment<FragmentLikedBinding>(FragmentLikedBinding::inflate) {
+    private val viewModel: LikedViewModel by viewModels()
+    private lateinit var songAdapter: SongAdapter
 
-    private val likedViewModel: LikedViewModel by viewModels()
-    private lateinit var binding: FragmentLikedBinding
-    private lateinit var adapter: LikedAdapter
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding = FragmentLikedBinding.bind(view)
-
-        setupUI()
-        setupListeners()
-        setupObservers()
+    override fun initData() {
+        viewModel.getFavoriteSongs()
     }
 
-    private fun setupUI() {
-        binding.rvLiked.layoutManager = LinearLayoutManager(requireContext())
+    override fun setupUI() {
+        songAdapter = SongAdapter(::addSongToFavorite, ::removeSongFromFavorite)
+        with(binding) {
+            rvLiked.layoutManager = LinearLayoutManager(requireContext())
+            rvLiked.adapter = songAdapter
+        }
     }
 
-    private fun setupListeners() {
+    override fun setupListeners() {
         binding.setting.setOnClickListener {
             findNavController().navigate(R.id.settingFragment)
         }
@@ -42,20 +40,33 @@ class LikedFragment : Fragment(R.layout.fragment_liked) {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.filter.filter(newText)
+//                adapter.filter.filter(newText)
                 return true
             }
         })
     }
 
-    private fun setupObservers() {
-        likedViewModel.getfavoriteuser()?.observe(viewLifecycleOwner, Observer { favoriteList ->
-            favoriteList?.let {
-                adapter = LikedAdapter(it, likedViewModel) { favoriteEntity ->
-                    likedViewModel.removeFavorite(favoriteEntity)
+    override fun setupObservers() {
+        viewModel.songs.observe(viewLifecycleOwner) {
+            when (it) {
+                Result.Empty -> {}
+                is Result.Error -> {}
+                Result.Loading -> {}
+                is Result.Success -> {
+                    songAdapter.submitList(it.data)
                 }
-                binding.rvLiked.adapter = adapter
             }
-        })
+        }
+
+    }
+
+    private fun addSongToFavorite(song: SongDTO) {
+        viewModel.addSongToFavorite(song)
+        viewModel.getFavoriteSongs()
+    }
+
+    private fun removeSongFromFavorite(song: SongDTO) {
+        viewModel.removeSongFromFavorite(song)
+        viewModel.getFavoriteSongs()
     }
 }
