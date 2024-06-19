@@ -25,6 +25,7 @@ import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 import java.util.UUID
+import kotlin.math.roundToLong
 
 class ListeningFragment :
     BaseFragment<FragmentListeningBinding>(FragmentListeningBinding::inflate) {
@@ -38,6 +39,7 @@ class ListeningFragment :
     private var currentTrack: Track? = null
     var _isChecked = false
     private var sessionId: String = ""
+    private var trackStartTime: Long = 0L
 
     override fun setupUI() {
         with(binding) {
@@ -85,6 +87,9 @@ class ListeningFragment :
                                     imageplaysong.setImageResource(R.drawable.pause_icon)
                                 }
                                 Timber.d(track.name + " by " + track.artist.name)
+
+                                // Capture track start time
+                                trackStartTime = System.currentTimeMillis()
                             }
                         }
                     }
@@ -120,8 +125,12 @@ class ListeningFragment :
                 }
             })
             stopsession.setOnClickListener {
-                val bundle = Bundle()
-                bundle.putString("SESSION_ID", sessionId)
+                val sessionDurationMillis = System.currentTimeMillis() - trackStartTime
+                val sessionDurationMinutes = (sessionDurationMillis / 60000.0).roundToLong()
+                val bundle = Bundle().apply {
+                    putString("SESSION_ID", sessionId)
+                    putLong("SESSION_DURATION_MINUTES", sessionDurationMinutes)
+                }
                 findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment, bundle)
             }
             imageplaysong.setOnClickListener {

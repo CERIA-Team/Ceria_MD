@@ -13,15 +13,17 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
     private val viewModel: SummaryViewModel by viewModels()
     private lateinit var sessionId: String
     private lateinit var summaryAdapter: SummaryAdapter
+    private var sessionDurationMinutes: Long = 0
 
     override fun setupUI() {
         binding.rvStopsession.layoutManager = LinearLayoutManager(requireContext())
         summaryAdapter = SummaryAdapter(emptyList())
         binding.rvStopsession.adapter = summaryAdapter
 
-        // Get sessionId from arguments
+        // Get sessionId and sessionDuration from arguments
         arguments?.let {
-            sessionId = it.getString("SESSION_ID", "")
+            sessionId = it.getString("SESSION_ID", "") ?: ""
+            sessionDurationMinutes = it.getLong("SESSION_DURATION_MINUTES", 0)
         }
     }
 
@@ -30,6 +32,9 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
     }
 
     override fun setupObservers() {
+        // Display session duration in minutes
+        binding.duration.text = extractFirstDigit(sessionDurationMinutes)
+
         // Observe LiveData from ViewModel
         viewModel.getSummaryBySessionId(sessionId).observe(viewLifecycleOwner, Observer { summaryEntities ->
             summaryEntities?.let { entities ->
@@ -49,17 +54,24 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
 
                 summaryAdapter.setSummaryEntities(uniqueSummaries)
                 Log.d("SummaryFragment", "Received summaryEntities: $uniqueSummaries")
-
-
             }
         })
     }
 
+    private fun extractFirstDigit(duration: Long): String {
+        val durationString = duration.toString()
+        return if (durationString.isNotEmpty()) {
+            durationString.substring(0, 1)
+        } else {
+            "0"
+        }
+    }
     companion object {
-        fun newInstance(sessionId: String): SummaryFragment {
+        fun newInstance(sessionId: String, sessionDurationMinutes: Long): SummaryFragment {
             val fragment = SummaryFragment()
             val args = Bundle()
             args.putString("SESSION_ID", sessionId)
+            args.putLong("SESSION_DURATION_MINUTES", sessionDurationMinutes)
             fragment.arguments = args
             return fragment
         }
