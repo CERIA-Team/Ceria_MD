@@ -1,5 +1,7 @@
 package com.ceria.capstone.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -17,12 +19,14 @@ import com.ceria.capstone.R
 import com.ceria.capstone.databinding.ActivityMainBinding
 import com.ceria.capstone.utils.gone
 import com.ceria.capstone.utils.visible
+import com.google.android.material.snackbar.Snackbar
+import com.spotify.android.appremote.api.SpotifyAppRemote
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -53,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             bottomNav.setupWithNavController(navController)
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
-                    R.id.loginFragment -> {
+                    R.id.loginFragment, R.id.settingFragment, R.id.likedFragment, R.id.detailFragment, R.id.listeningFragment, R.id.summaryFragment, R.id.monitorFragment -> {
                         bottomBar.gone()
                         fabPlay.gone()
                         navHostFragment.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -69,7 +73,6 @@ class MainActivity : AppCompatActivity() {
                             override fun onGlobalLayout() {
                                 bottomBar.viewTreeObserver.removeOnGlobalLayoutListener(this)
                                 val bottomAppBarHeight = bottomBar.height
-                                Timber.d("BottomAppBar height: $bottomAppBarHeight")
                                 navHostFragment.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                                     bottomMargin = bottomAppBarHeight
                                 }
@@ -80,6 +83,21 @@ class MainActivity : AppCompatActivity() {
             }
 
             fabPlay.setOnClickListener {
+                if (!SpotifyAppRemote.isSpotifyInstalled(this@MainActivity.applicationContext)) {
+                    Snackbar.make(
+                        this@MainActivity.findViewById(android.R.id.content),
+                        R.string.spotify_not_found,
+                        Snackbar.LENGTH_LONG
+                    ).setAction(getString(R.string.install_now)) {
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://play.google.com/store/apps/details?id=com.spotify.music")
+                            )
+                        )
+                    }.show()
+                    return@setOnClickListener
+                }
                 bottomNav.menu.getItem(1).isEnabled = true
                 bottomNav.selectedItemId = R.id.session
                 bottomNav.menu.getItem(1).isEnabled = false

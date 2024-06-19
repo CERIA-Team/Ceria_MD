@@ -23,7 +23,8 @@ class AuthRepository @Inject constructor(
 ) : IAuthRepository {
     override suspend fun checkToken(): LiveData<Result<String>> = liveData {
         emit(Result.Loading)
-        if (sessionManager.ceriaToken.first().isNullOrEmpty() ||
+        if (
+            sessionManager.ceriaToken.first().isNullOrEmpty() ||
             sessionManager.spotifyAccessToken.first().isNullOrEmpty() ||
             sessionManager.spotifyRefreshToken.first().isNullOrEmpty()
         ) {
@@ -63,5 +64,4 @@ class AuthRepository @Inject constructor(
             sessionManager.removeToken()
         }
     }
-
 }

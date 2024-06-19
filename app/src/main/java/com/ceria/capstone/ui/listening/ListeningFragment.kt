@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.SeekBar
+import androidx.core.content.ContextCompat
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.ceria.capstone.BuildConfig
 import com.ceria.capstone.R
@@ -16,6 +18,7 @@ import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.Track
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,6 +29,7 @@ import java.util.Timer
 import java.util.TimerTask
 import java.util.UUID
 
+@AndroidEntryPoint
 class ListeningFragment :
     BaseFragment<FragmentListeningBinding>(FragmentListeningBinding::inflate) {
     private var spotifyAppRemote: SpotifyAppRemote? = null
@@ -35,47 +39,84 @@ class ListeningFragment :
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
     private val viewModel: ListeningViewModel by viewModels()
-    private var currentTrack: Track? = null
-    var _isChecked = false
-    private var sessionId: String = ""
+    private val args: ListeningFragmentArgs by navArgs()
+    private var previousTrack: Track? = null
+    override fun initData() {
+        viewModel.setCurrentHeartRate(args.initialBpm)
+    }
+//     private var currentTrack: Track? = null
+//     var _isChecked = false
+//     private var sessionId: String = ""
 
     override fun setupUI() {
         with(binding) {
             val connectionParams = ConnectionParams.Builder(BuildConfig.SPOTIFY_CLIENT_ID)
                 .setRedirectUri("ceriaauthresponse://callback").showAuthView(false).build()
-
             SpotifyAppRemote.connect(
                 requireContext(),
                 connectionParams,
                 object : Connector.ConnectionListener {
                     override fun onConnected(appRemote: SpotifyAppRemote) {
                         spotifyAppRemote = appRemote
-                        Timber.d("Connected! Yay!")
                         spotifyAppRemote?.let { remote ->
-                            val playlistURI = "spotify:playlist:37i9dQZF1DX4JAvHpjipBk"
-                            remote.playerApi.play(playlistURI)
+                            val dummyTrack = listOf(
+                                "3sGJmCUfZKbbjtZ24eaepn",
+                                "6Jp404HEXaNS4FD9ZAMub1",
+                                "2K3areNeCsCI55wKupEhBW"
+                            )
+                            remote.playerApi.play("spotify:track:${dummyTrack[0]}")
+                            remote.playerApi.queue("spotify:track:${dummyTrack[1]}")
+                            remote.playerApi.queue("spotify:track:${dummyTrack[2]}")
                             remote.playerApi.subscribeToPlayerState().setEventCallback {
-                                currentTrack = it.track
-                                updateFavoriteToggleState()
 
-                                if (sessionId.isEmpty()) {
-                                    sessionId = generateSessionId(currentTrack?.uri ?: "")
+                                val currentTrack: Track = it.track
+                                if (currentTrack.uri != previousTrack?.uri) {
+                                    titlealbum.text = currentTrack.name
+                                    titlealbum.isSelected = true
+                                    groupalbum.text =
+                                        currentTrack.artists.joinToString(separator = ", ") { artist -> artist.name }
+                                    groupalbum.isSelected = true
+                                    textbpm2.isSelected = true
+                                    Glide.with(requireContext()).load(
+                                        currentTrack.imageUri.raw?.replace(
+                                            "spotify:image:", "https://i.scdn.co/image/"
+                                        )
+                                    ).placeholder(
+                                        ContextCompat.getDrawable(
+                                            requireContext(), R.drawable.placeholder_song
+                                        )
+                                    ).error(
+                                        ContextCompat.getDrawable(
+                                            requireContext(), R.drawable.placeholder_song
+                                        )
+                                    ).into(imagelistening)
+                                    timeend.text = formatMilliseconds(currentTrack.duration)
+                                    seekbar.max = (currentTrack.duration / 1000).toInt()
+                                    Timber.d("${currentTrack.name} by ${currentTrack.artist.name}")
+                                    previousTrack = currentTrack
                                 }
 
-                                val track = it.track
-                                titlealbum.text = track.name
-                                titlealbum.isSelected = true
-                                groupalbum.text =
-                                    track.artists.joinToString(separator = ", ") { artist -> artist.name }
-                                groupalbum.isSelected = true
-                                textbpm2.isSelected = true
-                                Glide.with(requireContext()).load(
-                                    track.imageUri.raw?.replace(
-                                        "spotify:image:", "https://i.scdn.co/image/"
-                                    )
-                                ).into(imagelistening)
-                                timeend.text = formatMilliseconds(track.duration)
-                                seekbar.max = (track.duration / 1000).toInt()
+//                                 currentTrack = it.track
+//                                 updateFavoriteToggleState()
+
+//                                 if (sessionId.isEmpty()) {
+//                                     sessionId = generateSessionId(currentTrack?.uri ?: "")
+//                                 }
+
+//                                 val track = it.track
+//                                 titlealbum.text = track.name
+//                                 titlealbum.isSelected = true
+//                                 groupalbum.text =
+//                                     track.artists.joinToString(separator = ", ") { artist -> artist.name }
+//                                 groupalbum.isSelected = true
+//                                 textbpm2.isSelected = true
+//                                 Glide.with(requireContext()).load(
+//                                     track.imageUri.raw?.replace(
+//                                         "spotify:image:", "https://i.scdn.co/image/"
+//                                     )
+//                                 ).into(imagelistening)
+//                                 timeend.text = formatMilliseconds(track.duration)
+//                                 seekbar.max = (track.duration / 1000).toInt()
                                 if (!isUserSeeking) {
                                     seekbar.progress = (it.playbackPosition / 1000).toInt()
                                 }
@@ -84,7 +125,6 @@ class ListeningFragment :
                                 } else {
                                     imageplaysong.setImageResource(R.drawable.pause_icon)
                                 }
-                                Timber.d(track.name + " by " + track.artist.name)
                             }
                         }
                     }
@@ -98,6 +138,12 @@ class ListeningFragment :
 
     override fun setupListeners() {
         with(binding) {
+            ibPlusBpm.setOnClickListener {
+                viewModel.incrementHeartRate()
+            }
+            ibMinusBpm.setOnClickListener {
+                viewModel.decrementHeartRate()
+            }
             seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?, progress: Int, fromUser: Boolean
@@ -120,9 +166,12 @@ class ListeningFragment :
                 }
             })
             stopsession.setOnClickListener {
-                val bundle = Bundle()
-                bundle.putString("SESSION_ID", sessionId)
-                findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment, bundle)
+                spotifyAppRemote?.playerApi?.pause()
+                SpotifyAppRemote.disconnect(spotifyAppRemote)
+                findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment)
+//                 val bundle = Bundle()
+//                 bundle.putString("SESSION_ID", sessionId)
+//                 findNavController().navigate(R.id.action_listeningFragment_to_summaryFragment, bundle)
             }
             imageplaysong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.playerState?.setResultCallback { playerState ->
@@ -216,6 +265,9 @@ class ListeningFragment :
                     }
                 }
             }, 0, 1000)
+            viewModel.currentHeartRate.observe(viewLifecycleOwner) {
+                initialbpm.text = getString(R.string.bpmtext, it)
+            }
         }
     }
 
