@@ -3,21 +3,58 @@ package com.ceria.capstone.ui.listening
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
+import com.ceria.capstone.data.Result
+import com.ceria.capstone.domain.model.SongDTO
+import com.ceria.capstone.domain.usecase.GetNextQueueUseCase
+import com.ceria.capstone.domain.usecase.GetSongRecommendationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ListeningViewModel : ViewModel() {
-    private val _currentHeartRate = MutableLiveData<Int>()
+@HiltViewModel
+class ListeningViewModel @Inject constructor(
+    private val getSongRecommendationsUseCase: GetSongRecommendationsUseCase,
+    private val getNextQueueUseCase: GetNextQueueUseCase
+) :
+    ViewModel() {
+    private val _currentHeartRate = MutableLiveData(70)
     val currentHeartRate: LiveData<Int> = _currentHeartRate
+
+    private val _nextQueue = MutableLiveData<Result<SongDTO>>(Result.Empty)
+    val nextQueue: LiveData<Result<SongDTO>> = _nextQueue
+
+    val initFlag = MutableLiveData(true)
+
+    private val _recommendations = MutableLiveData<Result<List<String>>>()
+    val recommendations: LiveData<Result<List<String>>> = _recommendations
 
     fun setCurrentHeartRate(value: Int) {
         _currentHeartRate.value = value
     }
+
     fun incrementHeartRate() {
         _currentHeartRate.value = _currentHeartRate.value?.plus(1)
     }
 
     fun decrementHeartRate() {
         _currentHeartRate.value = _currentHeartRate.value?.minus(1)
+    }
+
+    fun getNextQueue(){
+        viewModelScope.launch {
+            getNextQueueUseCase.getNextQueue().asFlow().collect {
+                _nextQueue.postValue(it)
+            }
+        }
+    }
+    fun getSongRecommendations(bpm: Int, listenId: String) {
+        viewModelScope.launch {
+            getSongRecommendationsUseCase.getRecommendations(bpm, listenId).asFlow().collect {
+                _recommendations.postValue(it)
+            }
+        }
     }
 }
 // import android.app.Application

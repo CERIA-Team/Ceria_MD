@@ -80,7 +80,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         "streaming",
                         "app-remote-control",
                         "user-read-email",
-                        "user-read-recently-played"
+                        "user-read-recently-played",
+                        "user-read-currently-playing",
+                        "user-read-playback-state"
                     )
                 ).build()
                 val intent =

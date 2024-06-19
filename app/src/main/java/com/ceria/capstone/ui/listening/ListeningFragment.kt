@@ -1,32 +1,32 @@
 package com.ceria.capstone.ui.listening
 
-import android.os.Bundle
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.ceria.capstone.BuildConfig
 import com.ceria.capstone.R
+import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentListeningBinding
 import com.ceria.capstone.ui.common.BaseFragment
+import com.ceria.capstone.utils.invisible
+import com.ceria.capstone.utils.toastLong
+import com.ceria.capstone.utils.visible
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.Track
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+
 import java.util.UUID
 import kotlin.math.roundToLong
 
@@ -41,6 +41,15 @@ class ListeningFragment :
     private var debounceRunnable: Runnable? = null
     private val viewModel: ListeningViewModel by viewModels()
 
+    private val args: ListeningFragmentArgs by navArgs()
+    private var previousTrack: Track? = null
+    override fun initData() {
+        viewModel.setCurrentHeartRate(args.initialBpm)
+        viewModel.initFlag.postValue(true)
+    }
+//     var _isChecked = false
+
+
     override fun setupUI() {
         with(binding) {
             val connectionParams = ConnectionParams.Builder(BuildConfig.SPOTIFY_CLIENT_ID)
@@ -51,25 +60,26 @@ class ListeningFragment :
                 object : Connector.ConnectionListener {
                     override fun onConnected(appRemote: SpotifyAppRemote) {
                         spotifyAppRemote = appRemote
+                        viewModel.getSongRecommendations(args.initialBpm, args.listenSessionId)
                         spotifyAppRemote?.let { remote ->
-                            val dummyTrack = listOf(
-                                "3sGJmCUfZKbbjtZ24eaepn",
-                                "6Jp404HEXaNS4FD9ZAMub1",
-                                "2K3areNeCsCI55wKupEhBW"
-                            )
-                            remote.playerApi.play("spotify:track:${dummyTrack[0]}")
-                            remote.playerApi.queue("spotify:track:${dummyTrack[1]}")
-                            remote.playerApi.queue("spotify:track:${dummyTrack[2]}")
                             remote.playerApi.subscribeToPlayerState().setEventCallback {
-
                                 val currentTrack: Track = it.track
                                 if (currentTrack.uri != previousTrack?.uri) {
+                                    val tempRecommendations = viewModel.recommendations.value
+                                    if (tempRecommendations is Result.Success) {
+                                        if ("spotify:track:" + tempRecommendations.data[2] == currentTrack.uri) {
+                                            viewModel.getSongRecommendations(
+                                                viewModel.currentHeartRate.value ?: args.initialBpm,
+                                                args.listenSessionId
+                                            )
+                                        }
+                                    }
                                     titlealbum.text = currentTrack.name
                                     titlealbum.isSelected = true
                                     groupalbum.text =
                                         currentTrack.artists.joinToString(separator = ", ") { artist -> artist.name }
                                     groupalbum.isSelected = true
-                                    textbpm2.isSelected = true
+                                    tvNextQueue.isSelected = true
                                     Glide.with(requireContext()).load(
                                         currentTrack.imageUri.raw?.replace(
                                             "spotify:image:", "https://i.scdn.co/image/"
@@ -85,31 +95,9 @@ class ListeningFragment :
                                     ).into(imagelistening)
                                     timeend.text = formatMilliseconds(currentTrack.duration)
                                     seekbar.max = (currentTrack.duration / 1000).toInt()
-                                    Timber.d("${currentTrack.name} by ${currentTrack.artist.name}")
+                                    viewModel.getNextQueue()
                                     previousTrack = currentTrack
                                 }
-
-//                                 currentTrack = it.track
-//                                 updateFavoriteToggleState()
-
-//                                 if (sessionId.isEmpty()) {
-//                                     sessionId = generateSessionId(currentTrack?.uri ?: "")
-//                                 }
-
-//                                 val track = it.track
-//                                 titlealbum.text = track.name
-//                                 titlealbum.isSelected = true
-//                                 groupalbum.text =
-//                                     track.artists.joinToString(separator = ", ") { artist -> artist.name }
-//                                 groupalbum.isSelected = true
-//                                 textbpm2.isSelected = true
-//                                 Glide.with(requireContext()).load(
-//                                     track.imageUri.raw?.replace(
-//                                         "spotify:image:", "https://i.scdn.co/image/"
-//                                     )
-//                                 ).into(imagelistening)
-//                                 timeend.text = formatMilliseconds(track.duration)
-//                                 seekbar.max = (track.duration / 1000).toInt()
                                 if (!isUserSeeking) {
                                     seekbar.progress = (it.playbackPosition / 1000).toInt()
                                 }
@@ -160,6 +148,13 @@ class ListeningFragment :
                 }
             })
             stopsession.setOnClickListener {
+                spotifyAppRemote?.playerApi?.pause()
+                SpotifyAppRemote.disconnect(spotifyAppRemote)
+                findNavController().navigate(
+                    ListeningFragmentDirections.actionListeningFragmentToSummaryFragment(
+                        args.listenSessionId
+                    )
+                )
             }
             imageplaysong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.playerState?.setResultCallback { playerState ->
@@ -174,76 +169,83 @@ class ListeningFragment :
             }
             imagenextsong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.skipNext()
-                updateFavoriteToggleState()
+//                updateFavoriteToggleState()
             }
             imagepresong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.skipPrevious()
-                updateFavoriteToggleState()
+//                updateFavoriteToggleState()
             }
 
-            toggleFavorite.setOnClickListener {
-                currentTrack?.let { track ->
-                    val id = track.uri.hashCode()
-                    val albumName = track.album.name
-                    val username = track.name
-                    val avatarUrl =
-                        track.imageUri.raw?.replace("spotify:image:", "https://i.scdn.co/image/")
-                    if (avatarUrl != null) {
-                        Timber.d("Toggling favorite for track: $username")
-                        // Panggil fungsi insert atau remove dari ViewModel
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val count = viewModel.checkUser(id)
-                            withContext(Dispatchers.Main) {
-                                if (count != null) {
-                                    if (count > 0) {
-                                        viewModel.remove(id)
-                                        _isChecked = false
-                                    } else {
-                                        viewModel.insert(username, id, albumName, avatarUrl)
-                                        _isChecked = true
-                                    }
-                                    toggleFavorite.isChecked = _isChecked
-                                }
-                            }
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), "Image URL is null", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                } ?: run {
-                    Toast.makeText(requireContext(), "Track is null", Toast.LENGTH_SHORT).show()
-                }
-            }
+//            toggleFavorite.setOnClickListener {
+//                currentTrack?.let { track ->
+//                    val id = track.uri.hashCode()
+//                    val albumName = track.album.name
+//                    val username = track.name
+//                    val avatarUrl =
+//                        track.imageUri.raw?.replace("spotify:image:", "https://i.scdn.co/image/")
+//                    if (avatarUrl != null) {
+//                        Timber.d("Toggling favorite for track: $username")
+//                        // Panggil fungsi insert atau remove dari ViewModel
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            val count = viewModel.checkUser(id)
+//                            withContext(Dispatchers.Main) {
+//                                if (count != null) {
+//                                    if (count > 0) {
+//                                        viewModel.remove(id)
+//                                        _isChecked = false
+//                                    } else {
+//                                        viewModel.insert(username, id, albumName, avatarUrl)
+//                                        _isChecked = true
+//                                    }
+//                                    toggleFavorite.isChecked = _isChecked
+//                                }
+//                            }
+//                        }
+//                    } else {
+//                        Toast.makeText(requireContext(), "Image URL is null", Toast.LENGTH_SHORT)
+//                            .show()
+//                    }
+//                } ?: run {
+//                    Toast.makeText(requireContext(), "Track is null", Toast.LENGTH_SHORT).show()
+//                }
+//            }
 
         }
     }
 
-    private fun updateFavoriteToggleState() {
-        currentTrack?.let { track ->
-            val id = track.uri.hashCode()
-            viewModel.insertSong(track, sessionId)
-            CoroutineScope(Dispatchers.IO).launch {
-                val count = viewModel.checkUser(id)
-                withContext(Dispatchers.Main) {
-                    if (count != null && count > 0) {
-                        _isChecked = true
-                    } else {
-                        _isChecked = false
-                    }
-                    binding.toggleFavorite.isChecked = _isChecked
-                }
-            }
-        }
-    }
+//    private fun updateFavoriteToggleState() {
+//        currentTrack?.let { track ->
+//            val id = track.uri.hashCode()
+//            viewModel.insertSong(track, sessionId)
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val count = viewModel.checkUser(id)
+//                withContext(Dispatchers.Main) {
+//                    if (count != null && count > 0) {
+//                        _isChecked = true
+//                    } else {
+//                        _isChecked = false
+//                    }
+//                    binding.toggleFavorite.isChecked = _isChecked
+//                }
+//            }
+//        }
+//    }
 
+    @SuppressLint("SetTextI18n")
     override fun setupObservers() {
         with(binding) {
-
             playbackPositionTimer = Timer()
             playbackPositionTimer?.schedule(object : TimerTask() {
                 override fun run() {
                     uiHandler.post {
                         spotifyAppRemote?.playerApi?.playerState?.setResultCallback { playerState ->
+                            val tempNext = viewModel.nextQueue.value
+                            if (tempNext is Result.Success) {
+                                if ("spotify:track:" + tempNext.data.id == playerState.track.uri) {
+                                    viewModel.getNextQueue()
+                                }
+
+                            }
                             val position = playerState.playbackPosition
                             timestart.text = formatMilliseconds(position)
                             if (!isUserSeeking) {
@@ -256,13 +258,60 @@ class ListeningFragment :
             viewModel.currentHeartRate.observe(viewLifecycleOwner) {
                 initialbpm.text = getString(R.string.bpmtext, it)
             }
+            viewModel.nextQueue.observe(viewLifecycleOwner) {
+                when (it) {
+                    is Result.Success -> {
+                        with(binding) {
+                            tvNextQueue.text = it.data.title + " - " + it.data.artist
+                            Glide.with(requireContext()).load(
+                                it.data.imageUrl
+                            ).placeholder(
+                                ContextCompat.getDrawable(
+                                    requireContext(), R.drawable.placeholder_song
+                                )
+                            ).error(
+                                ContextCompat.getDrawable(
+                                    requireContext(), R.drawable.placeholder_song
+                                )
+                            ).into(ivNext)
+                            layoutNextQueue.visible()
+                        }
+                    }
+
+                    else -> {
+                        binding.layoutNextQueue.invisible()
+                    }
+                }
+            }
+            viewModel.recommendations.observe(viewLifecycleOwner) {
+                when (it) {
+                    Result.Empty -> {}
+                    is Result.Error -> {
+                        if (viewModel.initFlag.value != false) {
+                            requireContext().toastLong(it.error)
+                            findNavController().popBackStack()
+                        }
+                    }
+
+                    Result.Loading -> {}
+                    is Result.Success -> {
+                        if (viewModel.initFlag.value!!) {
+                            spotifyAppRemote?.playerApi?.play("spotify:track:${it.data[0]}")
+                            spotifyAppRemote?.playerApi?.queue("spotify:track:${it.data[1]}")
+                            spotifyAppRemote?.playerApi?.queue("spotify:track:${it.data[2]}")
+                        } else {
+                            spotifyAppRemote?.playerApi?.queue("spotify:track:${it.data[0]}")
+                            spotifyAppRemote?.playerApi?.queue("spotify:track:${it.data[1]}")
+                            spotifyAppRemote?.playerApi?.queue("spotify:track:${it.data[2]}")
+                        }
+                        viewModel.getNextQueue()
+                        viewModel.initFlag.postValue(false)
+                    }
+                }
+            }
         }
     }
 
-    private fun generateSessionId(trackUri: String): String {
-        // Example: Generate session ID using UUID
-        return UUID.randomUUID().toString()
-    }
     private fun formatMilliseconds(ms: Long): String =
         String.format(Locale.getDefault(), "%02d:%02d", (ms / 1000) / 60, (ms / 1000) % 60)
 }

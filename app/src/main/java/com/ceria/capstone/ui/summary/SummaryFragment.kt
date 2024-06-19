@@ -1,79 +1,108 @@
 package com.ceria.capstone.ui.summary
 
-import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentSummaryBinding
-import com.ceria.capstone.domain.adapter.SummaryAdapter
 import com.ceria.capstone.ui.common.BaseFragment
+import com.ceria.capstone.utils.toastLong
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
+@AndroidEntryPoint
 class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBinding::inflate) {
     private val viewModel: SummaryViewModel by viewModels()
-    private lateinit var sessionId: String
+    private val args: SummaryFragmentArgs by navArgs()
     private lateinit var summaryAdapter: SummaryAdapter
-    private var sessionDurationMinutes: Long = 0
+//    private var sessionDurationMinutes: Long = 0
+
+    override fun initData() {
+        viewModel.getSessionDetail(args.listenSessionId)
+    }
 
     override fun setupUI() {
         binding.rvStopsession.layoutManager = LinearLayoutManager(requireContext())
-        summaryAdapter = SummaryAdapter(emptyList(),viewModel)
+
+        summaryAdapter = SummaryAdapter()
         binding.rvStopsession.adapter = summaryAdapter
+//=======
+//>>>>>>> Stashed changes
+//        summaryAdapter = SummaryAdapter(emptyList(),viewModel)
+//        binding.rvStopsession.adapter = summaryAdapter
 
         // Get sessionId and sessionDuration from arguments
-        arguments?.let {
-            sessionId = it.getString("SESSION_ID", "") ?: ""
-            sessionDurationMinutes = it.getLong("SESSION_DURATION_MINUTES", 0)
-        }
+//        arguments?.let {
+//            sessionId = it.getString("SESSION_ID", "") ?: ""
+//            sessionDurationMinutes = it.getLong("SESSION_DURATION_MINUTES", 0)
+//        }
+//>>>>>>> d496628957a59956f658224fba5756676fb00558
     }
 
     override fun setupListeners() {
-        // Setup listeners if needed
     }
 
     override fun setupObservers() {
+//<<<<<<< Updated upstream
+//=======
+//<<<<<<< HEAD
+        viewModel.songs.observe(viewLifecycleOwner) {
+            when (it) {
+                Result.Empty -> {
+                    requireActivity().toastLong("Empty")
+//=======
+//>>>>>>> Stashed changes
         // Display session duration in minutes
-        binding.duration.text = extractFirstDigit(sessionDurationMinutes)
+//        binding.duration.text = extractFirstDigit(sessionDurationMinutes)
 
         // Observe LiveData from ViewModel
-        viewModel.getSummaryBySessionId(sessionId).observe(viewLifecycleOwner, Observer { summaryEntities ->
-            summaryEntities?.let { entities ->
-                // Filter out entities with null albumNames and artists
-                val filteredEntities = entities.filter { entity ->
-                    !entity.albumNames.isNullOrBlank() && !entity.artists.isNullOrBlank()
+//        viewModel.getSummaryBySessionId(sessionId).observe(viewLifecycleOwner, Observer { summaryEntities ->
+//            summaryEntities?.let { entities ->
+//                // Filter out entities with null albumNames and artists
+//                val filteredEntities = entities.filter { entity ->
+//                    !entity.albumNames.isNullOrBlank() && !entity.artists.isNullOrBlank()
+//>>>>>>> d496628957a59956f658224fba5756676fb00558
                 }
 
-                // Remove duplicates based on albumNames and artists
-                val uniqueSummaries = filteredEntities.distinctBy { entity ->
-                    entity.albumNames + entity.artists
+                is Result.Error -> {
+                    requireActivity().toastLong(it.error)
                 }
 
-                val totalCount = uniqueSummaries.size
-                Log.d("SummaryFragment", "Total count of valid unique entities: $totalCount")
-                binding.songsplayed.text = totalCount.toString()
-
-                summaryAdapter.setSummaryEntities(uniqueSummaries)
-                Log.d("SummaryFragment", "Received summaryEntities: $uniqueSummaries")
+//<<<<<<< HEAD
+                Result.Loading -> {}
+                is Result.Success -> {
+                    binding.songsplayed.text = it.data.size.toString()
+                    summaryAdapter.submitList(it.data)
+                }
             }
-        })
-    }
-
-    private fun extractFirstDigit(duration: Long): String {
-        val durationString = duration.toString()
-        return if (durationString.isNotEmpty()) {
-            durationString.substring(0, 1)
-        } else {
-            "0"
-        }
-    }
-    companion object {
-        fun newInstance(sessionId: String, sessionDurationMinutes: Long): SummaryFragment {
-            val fragment = SummaryFragment()
-            val args = Bundle()
-            args.putString("SESSION_ID", sessionId)
-            args.putLong("SESSION_DURATION_MINUTES", sessionDurationMinutes)
-            fragment.arguments = args
-            return fragment
+//=======
+//                val totalCount = uniqueSummaries.size
+//                Log.d("SummaryFragment", "Total count of valid unique entities: $totalCount")
+//                binding.songsplayed.text = totalCount.toString()
+//
+//                summaryAdapter.setSummaryEntities(uniqueSummaries)
+//                Log.d("SummaryFragment", "Received summaryEntities: $uniqueSummaries")
+//            }
+//        })
+//    }
+//
+//    private fun extractFirstDigit(duration: Long): String {
+//        val durationString = duration.toString()
+//        return if (durationString.isNotEmpty()) {
+//            durationString.substring(0, 1)
+//        } else {
+//            "0"
+//        }
+//    }
+//    companion object {
+//        fun newInstance(sessionId: String, sessionDurationMinutes: Long): SummaryFragment {
+//            val fragment = SummaryFragment()
+//            val args = Bundle()
+//            args.putString("SESSION_ID", sessionId)
+//            args.putLong("SESSION_DURATION_MINUTES", sessionDurationMinutes)
+//            fragment.arguments = args
+//            return fragment
+//>>>>>>> d496628957a59956f658224fba5756676fb00558
         }
     }
 }
