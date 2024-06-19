@@ -14,6 +14,7 @@ import com.ceria.capstone.utils.gone
 import com.ceria.capstone.utils.invisible
 import com.ceria.capstone.utils.toastLong
 import com.ceria.capstone.utils.visible
+import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
@@ -118,6 +119,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         loginLayout.visible()
                         loadingLayout.gone()
                     }
+
                     Result.Loading -> {
                         loginLayout.gone()
                         loadingLayout.visible()
@@ -165,11 +167,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private fun checkSpotifyClient() {
         with(binding) {
-            val pm: PackageManager = requireActivity().packageManager
-            try {
-                pm.getPackageInfo("com.spotify.music", 0)
+            val isSpotifyInstalled = SpotifyAppRemote.isSpotifyInstalled(requireContext())
+            if (isSpotifyInstalled) {
                 layoutSpotifyNotFound.invisible()
-            } catch (e: PackageManager.NameNotFoundException) {
+            } else {
                 layoutSpotifyNotFound.visible()
             }
         }
