@@ -26,4 +26,8 @@ class LikedViewModel(application: Application) : AndroidViewModel(application) {
             userDao?.remove(favoriteEntity.id)
         }
     }
+    fun getFavoriteCountSync(): Int {
+         return userDao?.getFavoriteCountSync() ?: 0
+    }
+
 }

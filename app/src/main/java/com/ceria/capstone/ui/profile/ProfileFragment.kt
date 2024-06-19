@@ -1,5 +1,6 @@
 package com.ceria.capstone.ui.profile
 
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -8,17 +9,19 @@ import com.ceria.capstone.R
 import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentProfileBinding
 import com.ceria.capstone.ui.common.BaseFragment
+import com.ceria.capstone.ui.liked.LikedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
     private val viewModel: ProfileViewModel by viewModels()
+
     override fun initData() {
         viewModel.getProfile()
     }
 
     override fun setupUI() {
-
+        // You can perform UI setup if needed
     }
 
     override fun setupListeners() {
@@ -32,19 +35,18 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         }
     }
 
-
     override fun setupObservers() {
-        viewModel.profileResponse.observe(viewLifecycleOwner) {
-            when (it) {
+        viewModel.profileResponse.observe(viewLifecycleOwner) { result ->
+            when (result) {
                 Result.Empty -> {}
                 is Result.Error -> {}
                 Result.Loading -> {}
                 is Result.Success -> {
                     with(binding) {
-                        tvDisplayName.text = it.data.displayName
-                        tvEmailAddress.text = it.data.email
+                        tvDisplayName.text = result.data.displayName
+                        tvEmailAddress.text = result.data.email
                         Glide.with(requireContext()).load(
-                            it.data.imageUrl.toString()
+                            result.data.imageUrl.toString()
                         ).placeholder(
                             ContextCompat.getDrawable(
                                 requireContext(),
@@ -57,9 +59,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                             )
                         ).into(ivProfile)
                     }
+
                 }
             }
         }
+        viewModel.favoriteCount.observe(viewLifecycleOwner) { count ->
+            Log.d("ProfileFragment", "Favorite Count: $count")
+            binding.textView3.text = resources.getQuantityString(R.plurals.favorite_count_plural, count, count)
+        }
+
+        viewModel.getFavoriteCount()
     }
 
 }

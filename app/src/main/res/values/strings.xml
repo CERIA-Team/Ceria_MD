@@ -50,4 +50,8 @@
     <string name="listening_to_your_heartbeat">Listening to your heartbeat</string>
     <string name="error_when_starting_session">Error when starting session</string>
     <string name="find_music">Find in liked songs</string>
+    <plurals name="favorite_count_plural">
+        <item quantity="one">%d Song</item>
+        <item quantity="other">%d Songs</item>
+    </plurals>
 </resources>

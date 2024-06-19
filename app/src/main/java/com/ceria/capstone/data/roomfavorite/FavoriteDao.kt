@@ -22,4 +22,7 @@ interface FavoriteDao {
     @Query("SELECT count(*) FROM favorite WHERE favorite.username =:username ")
     fun checkuserfavorite(username: String): Int
 
+    @Query("SELECT count(*) FROM favorite")
+    fun getFavoriteCountSync(): Int
+
 }
