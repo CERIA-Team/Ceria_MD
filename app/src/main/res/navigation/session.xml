@@ -29,6 +29,9 @@
         <argument
             android:name="initialBpm"
             app:argType="integer" />
+        <argument
+            android:name="listenSessionId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/summaryFragment"
