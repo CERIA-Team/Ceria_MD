@@ -17,7 +17,7 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
 
     override fun setupUI() {
         binding.rvStopsession.layoutManager = LinearLayoutManager(requireContext())
-        summaryAdapter = SummaryAdapter(emptyList())
+        summaryAdapter = SummaryAdapter(emptyList(),viewModel)
         binding.rvStopsession.adapter = summaryAdapter
 
         // Get sessionId and sessionDuration from arguments
