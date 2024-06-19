@@ -54,4 +54,8 @@
         <item quantity="one">%d Song</item>
         <item quantity="other">%d Songs</item>
     </plurals>
+    <string name="confirmation_logout_title">Logout Confirmation</string>
+    <string name="confirmation_logout_message">Are you sure you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
