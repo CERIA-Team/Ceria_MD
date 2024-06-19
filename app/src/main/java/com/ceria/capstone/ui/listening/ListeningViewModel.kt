@@ -6,13 +6,9 @@ import com.ceria.capstone.data.Result
 import com.ceria.capstone.data.roomfavorite.FavoriteDao
 import com.ceria.capstone.data.roomfavorite.FavoriteDatabase
 import com.ceria.capstone.data.roomfavorite.FavoriteEntity
-import com.ceria.capstone.data.roomsummary.SummaryDao
-import com.ceria.capstone.data.roomsummary.SummaryDatabase
-import com.ceria.capstone.data.roomsummary.SummaryEntity
 import com.ceria.capstone.domain.model.SongDTO
 import com.ceria.capstone.domain.usecase.GetNextQueueUseCase
 import com.ceria.capstone.domain.usecase.GetSongRecommendationsUseCase
-import com.spotify.protocol.types.Track
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,14 +34,13 @@ class ListeningViewModel @Inject constructor(
     val recommendations: LiveData<Result<List<String>>> = _recommendations
 
     private val favoriteDao: FavoriteDao
-    private val summaryDao: SummaryDao
+
 
     init {
         val favoriteDb = FavoriteDatabase.getDatabase(application)
         favoriteDao = favoriteDb.favoriteuserDao()
 
-        val summaryDb = SummaryDatabase.getDatabase(application)
-        summaryDao = summaryDb.songDao()
+
     }
 
     fun setCurrentHeartRate(value: Int) {
