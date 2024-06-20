@@ -1,5 +1,6 @@
 package com.ceria.capstone.ui.summary
 
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,7 @@ class SummaryViewModel @Inject constructor(
 ) : ViewModel() {
     private val _songs = MutableLiveData<Result<List<SongDTO>>>()
     val songs: LiveData<Result<List<SongDTO>>> = _songs
+
     fun getSessionDetail(id: String) {
         viewModelScope.launch {
             getSessionDetailUseCase.getSessionDetail(id).asFlow().collect {

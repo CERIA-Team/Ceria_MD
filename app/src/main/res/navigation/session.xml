@@ -41,5 +41,6 @@
         <argument
             android:name="listenSessionId"
             app:argType="string" />
+
     </fragment>
 </navigation>

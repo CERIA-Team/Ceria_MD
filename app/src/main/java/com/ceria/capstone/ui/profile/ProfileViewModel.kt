@@ -1,16 +1,21 @@
 package com.ceria.capstone.ui.profile
 
+import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import com.ceria.capstone.data.Result
 import com.ceria.capstone.domain.model.ProfileDTO
 import com.ceria.capstone.domain.usecase.GetProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import com.ceria.capstone.data.Result
 import com.ceria.capstone.domain.model.SongDTO
 import com.ceria.capstone.domain.usecase.GetFavoriteSongsUseCase
 import timber.log.Timber

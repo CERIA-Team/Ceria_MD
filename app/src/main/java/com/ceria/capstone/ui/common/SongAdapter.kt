@@ -10,6 +10,10 @@ import com.bumptech.glide.Glide
 import com.ceria.capstone.R
 import com.ceria.capstone.databinding.ItemSongsBinding
 import com.ceria.capstone.domain.model.SongDTO
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SongAdapter(
     private val addFavorite: (SongDTO) -> Unit,

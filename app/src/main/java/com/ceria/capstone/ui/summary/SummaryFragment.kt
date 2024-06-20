@@ -42,9 +42,7 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
     override fun setupListeners() {}
 
     override fun setupObservers() {
-//<<<<<<< Updated upstream
-//=======
-//<<<<<<< HEAD
+
         viewModel.songs.observe(viewLifecycleOwner) {
             when (it) {
                 Result.Empty -> {
@@ -66,8 +64,6 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
                 is Result.Error -> {
                     requireActivity().toastLong(it.error)
                 }
-
-//<<<<<<< HEAD
                 Result.Loading -> {}
                 is Result.Success -> {
                     binding.songsplayed.text = it.data.size.toString()

@@ -1,24 +1,24 @@
 package com.ceria.capstone.ui.listening
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 import com.ceria.capstone.data.Result
 import com.ceria.capstone.domain.model.SongDTO
 import com.ceria.capstone.domain.usecase.GetNextQueueUseCase
 import com.ceria.capstone.domain.usecase.GetSongRecommendationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ListeningViewModel @Inject constructor(
     private val getSongRecommendationsUseCase: GetSongRecommendationsUseCase,
-    private val getNextQueueUseCase: GetNextQueueUseCase
-) :
-    ViewModel() {
+    private val getNextQueueUseCase: GetNextQueueUseCase,
+    application: Application
+) : AndroidViewModel(application) {
+
     private val _currentHeartRate = MutableLiveData(70)
     val currentHeartRate: LiveData<Int> = _currentHeartRate
 
@@ -29,6 +29,16 @@ class ListeningViewModel @Inject constructor(
 
     private val _recommendations = MutableLiveData<Result<List<String>>>()
     val recommendations: LiveData<Result<List<String>>> = _recommendations
+
+//    private val favoriteDao: FavoriteDao
+//
+//
+//    init {
+//        val favoriteDb = FavoriteDatabase.getDatabase(application)
+//        favoriteDao = favoriteDb.favoriteuserDao()
+//
+//
+//    }
 
     fun setCurrentHeartRate(value: Int) {
         _currentHeartRate.value = value
@@ -42,13 +52,14 @@ class ListeningViewModel @Inject constructor(
         _currentHeartRate.value = _currentHeartRate.value?.minus(1)
     }
 
-    fun getNextQueue(){
+    fun getNextQueue() {
         viewModelScope.launch {
             getNextQueueUseCase.getNextQueue().asFlow().collect {
                 _nextQueue.postValue(it)
             }
         }
     }
+
     fun getSongRecommendations(bpm: Int, listenId: String) {
         viewModelScope.launch {
             getSongRecommendationsUseCase.getRecommendations(bpm, listenId).asFlow().collect {
@@ -56,6 +67,8 @@ class ListeningViewModel @Inject constructor(
             }
         }
     }
+
+
 }
 // import android.app.Application
 // import androidx.lifecycle.AndroidViewModel
@@ -97,26 +110,6 @@ class ListeningViewModel @Inject constructor(
 
 //     fun checkUser(id: Int) = userDao.checkuser(id)
 
-//     fun remove(id: Int) {
-//         CoroutineScope(Dispatchers.IO).launch {
-//             userDao.remove(id)
-//         }
-//     }
 
-//     fun insertSong(track: Track, sessionId: String) {
-//         val artists = track.artists.map { it.name }.joinToString(", ")
-//         val albumName = track.album.name
-//         val imageUrl = track.imageUri.raw?.replace("spotify:image:", "https://i.scdn.co/image/")
-
-//         CoroutineScope(Dispatchers.IO).launch {
-//             val song = SummaryEntity(
-//                 sessionId = sessionId,
-//                 artists = artists,
-//                 albumNames = albumName,
-//                 imageUrls = imageUrl ?: ""
-//             )
-//             userDao2.insert(song)
-//         }
-//     }
 
 // }

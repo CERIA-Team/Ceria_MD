@@ -1,6 +1,7 @@
 package com.ceria.capstone.ui.listening
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.SeekBar
@@ -22,13 +23,14 @@ import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.Track
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-
-import java.util.UUID
-import kotlin.math.roundToLong
 
 @AndroidEntryPoint
 class ListeningFragment :
@@ -40,15 +42,19 @@ class ListeningFragment :
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
     private val viewModel: ListeningViewModel by viewModels()
-
     private val args: ListeningFragmentArgs by navArgs()
     private var previousTrack: Track? = null
+    private var _isChecked = false
+    private var currentTrack: Track? = null
+    private var trackStartTime: Long = 0L
+
+    private var Bpm: Int = 0
+
     override fun initData() {
         viewModel.setCurrentHeartRate(args.initialBpm)
+        Bpm = args.initialBpm
         viewModel.initFlag.postValue(true)
     }
-//     var _isChecked = false
-
 
     override fun setupUI() {
         with(binding) {
@@ -97,6 +103,10 @@ class ListeningFragment :
                                     seekbar.max = (currentTrack.duration / 1000).toInt()
                                     viewModel.getNextQueue()
                                     previousTrack = currentTrack
+
+                                    // Update current track and check if it is a favorite
+                                    this@ListeningFragment.currentTrack = currentTrack
+//                                    updateFavoriteToggleState()
                                 }
                                 if (!isUserSeeking) {
                                     seekbar.progress = (it.playbackPosition / 1000).toInt()
@@ -106,9 +116,9 @@ class ListeningFragment :
                                 } else {
                                     imageplaysong.setImageResource(R.drawable.pause_icon)
                                 }
-
                             }
                         }
+                        trackStartTime = System.currentTimeMillis()
                     }
 
                     override fun onFailure(throwable: Throwable) {
@@ -148,14 +158,27 @@ class ListeningFragment :
                 }
             })
             stopsession.setOnClickListener {
+                Timber.d("BPM recorded: $Bpm")
                 spotifyAppRemote?.playerApi?.pause()
+
+                val trackDuration = System.currentTimeMillis() - trackStartTime
+                val formattedDuration = formatMilliseconds(trackDuration)
+                // Disconnect from Spotify
                 SpotifyAppRemote.disconnect(spotifyAppRemote)
-                findNavController().navigate(
-                    ListeningFragmentDirections.actionListeningFragmentToSummaryFragment(
-                        args.listenSessionId
-                    )
+
+                // Navigating to SummaryFragment with listenSessionId and Bpm values
+                val bundle = Bundle()
+                bundle.putString("listenSessionId", args.listenSessionId)
+                bundle.putString("lastBpm", Bpm.toString())
+                bundle.putString("trackDuration", formattedDuration)
+
+                val navController = findNavController()
+                navController.navigate(
+                    R.id.action_listeningFragment_to_summaryFragment,
+                    bundle
                 )
             }
+
             imageplaysong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.playerState?.setResultCallback { playerState ->
                     if (playerState.isPaused) {
@@ -180,21 +203,21 @@ class ListeningFragment :
 //                currentTrack?.let { track ->
 //                    val id = track.uri.hashCode()
 //                    val albumName = track.album.name
-//                    val username = track.name
+//                    val username = track.artists.joinToString(separator = ", ") { artist -> artist.name }
 //                    val avatarUrl =
 //                        track.imageUri.raw?.replace("spotify:image:", "https://i.scdn.co/image/")
 //                    if (avatarUrl != null) {
 //                        Timber.d("Toggling favorite for track: $username")
 //                        // Panggil fungsi insert atau remove dari ViewModel
 //                        CoroutineScope(Dispatchers.IO).launch {
-//                            val count = viewModel.checkUser(id)
+//                            val count = viewModel.checkFavorite(id)
 //                            withContext(Dispatchers.Main) {
 //                                if (count != null) {
 //                                    if (count > 0) {
-//                                        viewModel.remove(id)
+//                                        viewModel.removeFavorite(id)
 //                                        _isChecked = false
 //                                    } else {
-//                                        viewModel.insert(username, id, albumName, avatarUrl)
+//                                        viewModel.insertFavorite(username, id, albumName, avatarUrl)
 //                                        _isChecked = true
 //                                    }
 //                                    toggleFavorite.isChecked = _isChecked
@@ -202,23 +225,20 @@ class ListeningFragment :
 //                            }
 //                        }
 //                    } else {
-//                        Toast.makeText(requireContext(), "Image URL is null", Toast.LENGTH_SHORT)
-//                            .show()
+//                        requireContext().toastLong("Image URL is null")
 //                    }
 //                } ?: run {
-//                    Toast.makeText(requireContext(), "Track is null", Toast.LENGTH_SHORT).show()
+//                    requireContext().toastLong("Track is null")
 //                }
 //            }
-
         }
     }
 
 //    private fun updateFavoriteToggleState() {
 //        currentTrack?.let { track ->
 //            val id = track.uri.hashCode()
-//            viewModel.insertSong(track, sessionId)
 //            CoroutineScope(Dispatchers.IO).launch {
-//                val count = viewModel.checkUser(id)
+//                val count = viewModel.checkFavorite(id)
 //                withContext(Dispatchers.Main) {
 //                    if (count != null && count > 0) {
 //                        _isChecked = true
@@ -244,7 +264,6 @@ class ListeningFragment :
                                 if ("spotify:track:" + tempNext.data.id == playerState.track.uri) {
                                     viewModel.getNextQueue()
                                 }
-
                             }
                             val position = playerState.playbackPosition
                             timestart.text = formatMilliseconds(position)
