@@ -45,7 +45,7 @@ class SummaryFragment : BaseFragment<FragmentSummaryBinding>(FragmentSummaryBind
                 Result.Loading -> {}
                 is Result.Success -> {
                     binding.songsplayed.text = it.data.size.toString()
-                    songAdapter.submitList(it.data)
+                    songAdapter.updateList(it.data)
                 }
             }
         }

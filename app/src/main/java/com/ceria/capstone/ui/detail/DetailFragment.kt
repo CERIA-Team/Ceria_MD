@@ -50,7 +50,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding>(FragmentDetailBinding
                     }
 
                     is Result.Success -> {
-                        songsAdapter.submitList(it.data)
+                        songsAdapter.updateList(it.data)
                         songsplayed.text = it.data.size.toString()
                         loadingSongs.gone()
                         rvSongs.visible()
