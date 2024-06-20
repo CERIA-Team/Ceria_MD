@@ -1,6 +1,7 @@
 package com.ceria.capstone.ui.profile
 
 import android.util.Log
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -39,10 +40,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     override fun setupObservers() {
         viewModel.profileResponse.observe(viewLifecycleOwner) { result ->
             when (result) {
-                Result.Empty -> {}
-                is Result.Error -> {}
-                Result.Loading -> {}
+                Result.Empty -> {
+                    binding.pb.visibility = View.GONE
+                }
+                is Result.Error -> {
+                    binding.pb.visibility = View.GONE
+                }
+                Result.Loading -> {
+                    binding.pb.visibility = View.VISIBLE
+                }
                 is Result.Success -> {
+                    binding.pb.visibility = View.GONE
                     with(binding) {
                         tvDisplayName.text = result.data.displayName
                         tvEmailAddress.text = result.data.email
@@ -66,10 +74,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         }
         viewModel.countFavorite.observe(viewLifecycleOwner) {
             when (it) {
-                Result.Empty -> {}
-                is Result.Error -> {}
-                Result.Loading -> {}
+                Result.Empty -> {
+                    binding.pb.visibility = View.GONE
+                }
+                is Result.Error -> {
+                    binding.pb.visibility = View.GONE
+                }
+                Result.Loading -> {
+                    binding.pb.visibility = View.VISIBLE
+                }
                 is Result.Success -> {
+                    binding.pb.visibility = View.GONE
                     binding.tvLikedCount.text = getString(R.string.n_songs, it.data.size)
                 }
             }

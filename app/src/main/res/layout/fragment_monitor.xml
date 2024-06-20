@@ -17,6 +17,8 @@
         android:paddingRight="48dp"
         android:paddingBottom="8dp"
         android:text="@string/imready"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

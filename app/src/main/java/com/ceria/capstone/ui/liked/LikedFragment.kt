@@ -1,5 +1,6 @@
 package com.ceria.capstone.ui.liked
 
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -49,10 +50,11 @@ class LikedFragment : BaseFragment<FragmentLikedBinding>(FragmentLikedBinding::i
     override fun setupObservers() {
         viewModel.songs.observe(viewLifecycleOwner) {
             when (it) {
-                Result.Empty -> {}
-                is Result.Error -> {}
-                Result.Loading -> {}
+                Result.Empty -> {binding.progressBar.visibility = View.GONE}
+                is Result.Error -> {binding.progressBar.visibility = View.GONE}
+                Result.Loading -> {binding.progressBar.visibility = View.VISIBLE}
                 is Result.Success -> {
+                    binding.progressBar.visibility = View.GONE
                     songAdapter.updateList(it.data)
                 }
             }
