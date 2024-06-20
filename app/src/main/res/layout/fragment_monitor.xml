@@ -16,7 +16,7 @@
         android:paddingTop="8dp"
         android:paddingRight="48dp"
         android:paddingBottom="8dp"
-        android:text="I'm Ready"
+        android:text="@string/imready"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
