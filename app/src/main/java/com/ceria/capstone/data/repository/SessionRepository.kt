@@ -131,4 +131,14 @@ class SessionRepository @Inject constructor(
             emit(Result.Error(e.message.toString()))
         }
     }
+
+    override suspend fun checkFavorite(id:String): LiveData<Result<Boolean>> = liveData {
+        emit(Result.Loading)
+        try {
+            val isSongFavorite = favoriteDatabase.favoriteDao().isSongFavorite(id)
+            emit(Result.Success(isSongFavorite))
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }
 }

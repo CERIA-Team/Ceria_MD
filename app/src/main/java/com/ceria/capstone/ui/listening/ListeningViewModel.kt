@@ -1,14 +1,16 @@
 package com.ceria.capstone.ui.listening
 
-import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import com.ceria.capstone.data.Result
 import com.ceria.capstone.domain.model.SongDTO
+import com.ceria.capstone.domain.usecase.FavoriteUseCase
 import com.ceria.capstone.domain.usecase.GetNextQueueUseCase
 import com.ceria.capstone.domain.usecase.GetSongRecommendationsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,8 +18,8 @@ import javax.inject.Inject
 class ListeningViewModel @Inject constructor(
     private val getSongRecommendationsUseCase: GetSongRecommendationsUseCase,
     private val getNextQueueUseCase: GetNextQueueUseCase,
-    application: Application
-) : AndroidViewModel(application) {
+    private val favoriteUseCase: FavoriteUseCase
+) : ViewModel() {
 
     private val _currentHeartRate = MutableLiveData(70)
     val currentHeartRate: LiveData<Int> = _currentHeartRate
@@ -25,20 +27,13 @@ class ListeningViewModel @Inject constructor(
     private val _nextQueue = MutableLiveData<Result<SongDTO>>(Result.Empty)
     val nextQueue: LiveData<Result<SongDTO>> = _nextQueue
 
+    private val _isFavorite = MutableLiveData<Result<Boolean>>()
+    val isFavorite: LiveData<Result<Boolean>> = _isFavorite
+
     val initFlag = MutableLiveData(true)
 
     private val _recommendations = MutableLiveData<Result<List<String>>>()
     val recommendations: LiveData<Result<List<String>>> = _recommendations
-
-//    private val favoriteDao: FavoriteDao
-//
-//
-//    init {
-//        val favoriteDb = FavoriteDatabase.getDatabase(application)
-//        favoriteDao = favoriteDb.favoriteuserDao()
-//
-//
-//    }
 
     fun setCurrentHeartRate(value: Int) {
         _currentHeartRate.value = value
@@ -65,6 +60,25 @@ class ListeningViewModel @Inject constructor(
             getSongRecommendationsUseCase.getRecommendations(bpm, listenId).asFlow().collect {
                 _recommendations.postValue(it)
             }
+        }
+    }
+
+    fun checkFavorite(id: String) {
+        viewModelScope.launch {
+            favoriteUseCase.checkFavorite(id).asFlow().collect {
+                _isFavorite.postValue(it)
+            }
+        }
+    }
+    fun addSongToFavorite(song: SongDTO) {
+        viewModelScope.launch {
+            favoriteUseCase.addSongToFavorite(song)
+        }
+    }
+
+    fun removeSongFromFavorite(song: SongDTO) {
+        viewModelScope.launch {
+            favoriteUseCase.removeSongFromFavorite(song)
         }
     }
 
@@ -109,7 +123,6 @@ class ListeningViewModel @Inject constructor(
 //     }
 
 //     fun checkUser(id: Int) = userDao.checkuser(id)
-
 
 
 // }

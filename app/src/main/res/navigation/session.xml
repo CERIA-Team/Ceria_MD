@@ -9,7 +9,7 @@
         android:id="@+id/monitorFragment"
         android:name="com.ceria.capstone.ui.monitor.MonitorFragment"
         android:label="fragment_monitor"
-        tools:layout="@layout/fragment_monitor" >
+        tools:layout="@layout/fragment_monitor">
         <action
             android:id="@+id/action_monitorFragment_to_listeningFragment"
             app:destination="@id/listeningFragment"
@@ -20,7 +20,7 @@
         android:id="@+id/listeningFragment"
         android:name="com.ceria.capstone.ui.listening.ListeningFragment"
         android:label="fragment_listening"
-        tools:layout="@layout/fragment_listening" >
+        tools:layout="@layout/fragment_listening">
         <action
             android:id="@+id/action_listeningFragment_to_summaryFragment"
             app:destination="@id/summaryFragment"
@@ -37,9 +37,15 @@
         android:id="@+id/summaryFragment"
         android:name="com.ceria.capstone.ui.summary.SummaryFragment"
         android:label="fragment_summary"
-        tools:layout="@layout/fragment_summary" >
+        tools:layout="@layout/fragment_summary">
         <argument
             android:name="listenSessionId"
+            app:argType="string" />
+        <argument
+            android:name="avgBpm"
+            app:argType="string" />
+        <argument
+            android:name="durationString"
             app:argType="string" />
 
     </fragment>

@@ -14,4 +14,5 @@ interface ISessionRepository {
     suspend fun addSongToFavorite(song: SongDTO)
     suspend fun removeSongFromFavorite(song: SongDTO)
     suspend fun getFavoriteSongs(): LiveData<Result<List<SongDTO>>>
+    suspend fun checkFavorite(id: String): LiveData<Result<Boolean>>
 }

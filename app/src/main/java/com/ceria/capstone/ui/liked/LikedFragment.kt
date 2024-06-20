@@ -40,7 +40,7 @@ class LikedFragment : BaseFragment<FragmentLikedBinding>(FragmentLikedBinding::i
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-//                adapter.filter.filter(newText)
+                songAdapter.filter.filter(newText)
                 return true
             }
         })
@@ -53,7 +53,7 @@ class LikedFragment : BaseFragment<FragmentLikedBinding>(FragmentLikedBinding::i
                 is Result.Error -> {}
                 Result.Loading -> {}
                 is Result.Success -> {
-                    songAdapter.submitList(it.data)
+                    songAdapter.updateList(it.data)
                 }
             }
         }

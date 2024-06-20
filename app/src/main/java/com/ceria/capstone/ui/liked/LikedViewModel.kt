@@ -41,20 +41,5 @@ class LikedViewModel @Inject constructor(
             favoriteUseCase.removeSongFromFavorite(song)
         }
     }
-//    private var userDao: FavoriteDao?
-//    private var userDb: FavoriteDatabase?
-//
-//    init {
-//        userDb = FavoriteDatabase.getDatabase(application)
-//        userDao = userDb?.favoriteuserDao()
-//    }
-//
-//    fun getfavoriteuser(): LiveData<List<FavoriteEntity>>? {
-//        return userDao?.getfavoriteuser()
-//    }
-//    fun removeFavorite(favoriteEntity: FavoriteEntity) {
-//        viewModelScope.launch {
-//            userDao?.remove(favoriteEntity.id)
-//        }
-//    }
+
 }
