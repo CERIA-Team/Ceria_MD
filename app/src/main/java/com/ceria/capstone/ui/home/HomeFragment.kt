@@ -8,6 +8,8 @@ import com.ceria.capstone.data.Result
 import com.ceria.capstone.databinding.FragmentHomeBinding
 import com.ceria.capstone.ui.MainActivity
 import com.ceria.capstone.ui.common.BaseFragment
+import com.ceria.capstone.utils.gone
+import com.ceria.capstone.utils.visible
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,8 +54,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             when (it) {
                 Result.Empty -> {}
                 is Result.Error -> {}
-                Result.Loading -> {}
+                Result.Loading -> {
+                    binding.rvHistorySession.gone()
+                    binding.loadingSession.visible()
+                }
                 is Result.Success -> {
+                    binding.loadingSession.gone()
+                    binding.rvHistorySession.visible()
                     sessionAdapter.submitList(it.data)
                 }
             }
