@@ -60,4 +60,6 @@
     <string name="no">No</string>
     <string name="played_n_songs">Played %1$d songs</string>
     <string name="session_id">Session %1$s</string>
+    <string name="listennow">Listen Now</string>
+    <string name="imready">I\'m Ready</string>
 </resources>

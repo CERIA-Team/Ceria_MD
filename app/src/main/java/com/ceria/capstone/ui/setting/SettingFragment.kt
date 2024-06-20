@@ -1,6 +1,8 @@
 package com.ceria.capstone.ui.setting
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.provider.Settings
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.viewModels
@@ -21,6 +23,9 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>(FragmentSettingBind
         with(binding) {
             tvLogout.setOnClickListener {
                 showLogoutConfirmationDialog()
+            }
+            language.setOnClickListener {
+                startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
             }
         }
     }
