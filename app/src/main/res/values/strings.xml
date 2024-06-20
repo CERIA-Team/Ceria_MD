@@ -58,4 +58,6 @@
     <string name="confirmation_logout_message">Are you sure you want to log out?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="played_n_songs">Played %1$d songs</string>
+    <string name="session_id">Session %1$s</string>
 </resources>

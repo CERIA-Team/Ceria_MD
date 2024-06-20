@@ -1,7 +1,7 @@
 package com.ceria.capstone.data.remote.interceptor
 
 import com.ceria.capstone.BuildConfig
-import com.ceria.capstone.data.local.SessionManager
+import com.ceria.capstone.data.local.datastore.SessionManager
 import com.ceria.capstone.data.remote.service.SpotifyAuthService
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking

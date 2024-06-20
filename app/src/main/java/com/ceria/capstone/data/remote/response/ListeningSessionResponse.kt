@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class ListeningSessionResponse(
 
     @field:SerializedName("data")
-    val data: List<DataItem?>? = null,
+    val data: List<ListeningSessionItem>? = null,
 
     @field:SerializedName("message")
     val message: String,
@@ -17,14 +17,14 @@ data class ListeningSessionResponse(
 data class Count(
 
     @field:SerializedName("Session")
-    val session: Int? = null
+    val session: Int
 )
 
-data class DataItem(
+data class ListeningSessionItem(
 
     @field:SerializedName("_count")
-    val count: Count? = null,
+    val count: Count,
 
     @field:SerializedName("listen_id")
-    val listenId: String? = null
+    val listenId: String
 )

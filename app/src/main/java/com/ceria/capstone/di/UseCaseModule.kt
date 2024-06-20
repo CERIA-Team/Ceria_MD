@@ -4,6 +4,9 @@ import com.ceria.capstone.data.repository.AuthRepository
 import com.ceria.capstone.data.repository.SessionRepository
 import com.ceria.capstone.data.repository.UserRepository
 import com.ceria.capstone.domain.usecase.CheckTokenUseCase
+import com.ceria.capstone.domain.usecase.FavoriteUseCase
+import com.ceria.capstone.domain.usecase.GetAllSessionsUseCase
+import com.ceria.capstone.domain.usecase.GetFavoriteSongsUseCase
 import com.ceria.capstone.domain.usecase.GetNextQueueUseCase
 import com.ceria.capstone.domain.usecase.GetProfileUseCase
 import com.ceria.capstone.domain.usecase.GetSessionDetailUseCase
@@ -66,5 +69,23 @@ object UseCaseModule {
     @ViewModelScoped
     fun provideGetSessionDetailUseCase(sessionRepository: SessionRepository): GetSessionDetailUseCase {
         return GetSessionDetailUseCase(sessionRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetAllSessionsUseCase(sessionRepository: SessionRepository): GetAllSessionsUseCase {
+        return GetAllSessionsUseCase(sessionRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideFavoriteUseCase(sessionRepository: SessionRepository): FavoriteUseCase {
+        return FavoriteUseCase(sessionRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetFavoriteUseCase(sessionRepository: SessionRepository): GetFavoriteSongsUseCase {
+        return GetFavoriteSongsUseCase(sessionRepository)
     }
 }

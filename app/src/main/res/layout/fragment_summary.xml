@@ -38,6 +38,7 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textstopsession2">
 
@@ -193,7 +194,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_stopsession"
+        android:id="@+id/rv_songs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -202,7 +203,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
-        tools:listitem="@layout/recycleview">
+        tools:listitem="@layout/item_songs">
 
     </androidx.recyclerview.widget.RecyclerView>
 

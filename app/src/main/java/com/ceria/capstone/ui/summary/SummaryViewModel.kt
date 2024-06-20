@@ -9,8 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.ceria.capstone.domain.model.SongDTO
 import com.ceria.capstone.domain.usecase.GetSessionDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-//import com.ceria.capstone.data.roomfavorite.FavoriteDao
-//import com.ceria.capstone.data.roomfavorite.FavoriteDatabase
+//import com.ceria.capstone.data.local.room.FavoriteDao
+//import com.ceria.capstone.data.local.room.FavoriteDatabase
 //import com.ceria.capstone.data.roomsummary.SummaryDao
 //import com.ceria.capstone.data.roomsummary.SummaryDatabase
 //import com.ceria.capstone.data.roomsummary.SummaryEntity
@@ -18,26 +18,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.ceria.capstone.data.Result
-import com.ceria.capstone.data.roomfavorite.FavoriteDao
-import com.ceria.capstone.data.roomfavorite.FavoriteDatabase
-import com.ceria.capstone.data.roomfavorite.FavoriteEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.ceria.capstone.domain.usecase.FavoriteUseCase
 
 @HiltViewModel
 class SummaryViewModel @Inject constructor(
     private val getSessionDetailUseCase: GetSessionDetailUseCase,
-    application: Application
-) :
-    ViewModel() {
-    private val favoriteDao: FavoriteDao
+    private val favoriteUseCase: FavoriteUseCase
+) : ViewModel() {
     private val _songs = MutableLiveData<Result<List<SongDTO>>>()
     val songs: LiveData<Result<List<SongDTO>>> = _songs
-
-    init {
-        val favoriteDb = FavoriteDatabase.getDatabase(application)
-        favoriteDao = favoriteDb.favoriteuserDao()
-    }
 
     fun getSessionDetail(id: String) {
         viewModelScope.launch {
@@ -47,23 +36,17 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
-    fun insertFavorite(username: String, id: Int, album: String, avatarUrl: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val user = FavoriteEntity(
-                id = id,
-                username = username,
-                album = album,
-                avatarurl = avatarUrl
-            )
-            favoriteDao.insert(user)
+    fun addSongToFavorite(song: SongDTO) {
+        viewModelScope.launch {
+            favoriteUseCase.addSongToFavorite(song)
         }
     }
-    fun removeFavorite(id: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            favoriteDao.remove(id)
+
+    fun removeSongFromFavorite(song: SongDTO) {
+        viewModelScope.launch {
+            favoriteUseCase.removeSongFromFavorite(song)
         }
     }
-    fun checkUser(username: String): Int = favoriteDao.checkuserfavorite(username)
 
 //=======
 //    // Define DAO and Database instances

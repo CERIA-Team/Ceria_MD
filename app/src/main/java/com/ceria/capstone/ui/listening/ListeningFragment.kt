@@ -42,12 +42,10 @@ class ListeningFragment :
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
     private val viewModel: ListeningViewModel by viewModels()
-
     private val args: ListeningFragmentArgs by navArgs()
     private var previousTrack: Track? = null
     private var _isChecked = false
     private var currentTrack: Track? = null
-
     private var trackStartTime: Long = 0L
 
     private var Bpm: Int = 0
@@ -108,7 +106,7 @@ class ListeningFragment :
 
                                     // Update current track and check if it is a favorite
                                     this@ListeningFragment.currentTrack = currentTrack
-                                    updateFavoriteToggleState()
+//                                    updateFavoriteToggleState()
                                 }
                                 if (!isUserSeeking) {
                                     seekbar.progress = (it.playbackPosition / 1000).toInt()
@@ -194,64 +192,64 @@ class ListeningFragment :
             }
             imagenextsong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.skipNext()
-                updateFavoriteToggleState()
+//                updateFavoriteToggleState()
             }
             imagepresong.setOnClickListener {
                 spotifyAppRemote?.playerApi?.skipPrevious()
-                updateFavoriteToggleState()
+//                updateFavoriteToggleState()
             }
 
-            toggleFavorite.setOnClickListener {
-                currentTrack?.let { track ->
-                    val id = track.uri.hashCode()
-                    val albumName = track.album.name
-                    val username = track.artists.joinToString(separator = ", ") { artist -> artist.name }
-                    val avatarUrl =
-                        track.imageUri.raw?.replace("spotify:image:", "https://i.scdn.co/image/")
-                    if (avatarUrl != null) {
-                        Timber.d("Toggling favorite for track: $username")
-                        // Panggil fungsi insert atau remove dari ViewModel
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val count = viewModel.checkFavorite(id)
-                            withContext(Dispatchers.Main) {
-                                if (count != null) {
-                                    if (count > 0) {
-                                        viewModel.removeFavorite(id)
-                                        _isChecked = false
-                                    } else {
-                                        viewModel.insertFavorite(username, id, albumName, avatarUrl)
-                                        _isChecked = true
-                                    }
-                                    toggleFavorite.isChecked = _isChecked
-                                }
-                            }
-                        }
-                    } else {
-                        requireContext().toastLong("Image URL is null")
-                    }
-                } ?: run {
-                    requireContext().toastLong("Track is null")
-                }
-            }
+//            toggleFavorite.setOnClickListener {
+//                currentTrack?.let { track ->
+//                    val id = track.uri.hashCode()
+//                    val albumName = track.album.name
+//                    val username = track.artists.joinToString(separator = ", ") { artist -> artist.name }
+//                    val avatarUrl =
+//                        track.imageUri.raw?.replace("spotify:image:", "https://i.scdn.co/image/")
+//                    if (avatarUrl != null) {
+//                        Timber.d("Toggling favorite for track: $username")
+//                        // Panggil fungsi insert atau remove dari ViewModel
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            val count = viewModel.checkFavorite(id)
+//                            withContext(Dispatchers.Main) {
+//                                if (count != null) {
+//                                    if (count > 0) {
+//                                        viewModel.removeFavorite(id)
+//                                        _isChecked = false
+//                                    } else {
+//                                        viewModel.insertFavorite(username, id, albumName, avatarUrl)
+//                                        _isChecked = true
+//                                    }
+//                                    toggleFavorite.isChecked = _isChecked
+//                                }
+//                            }
+//                        }
+//                    } else {
+//                        requireContext().toastLong("Image URL is null")
+//                    }
+//                } ?: run {
+//                    requireContext().toastLong("Track is null")
+//                }
+//            }
         }
     }
 
-    private fun updateFavoriteToggleState() {
-        currentTrack?.let { track ->
-            val id = track.uri.hashCode()
-            CoroutineScope(Dispatchers.IO).launch {
-                val count = viewModel.checkFavorite(id)
-                withContext(Dispatchers.Main) {
-                    if (count != null && count > 0) {
-                        _isChecked = true
-                    } else {
-                        _isChecked = false
-                    }
-                    binding.toggleFavorite.isChecked = _isChecked
-                }
-            }
-        }
-    }
+//    private fun updateFavoriteToggleState() {
+//        currentTrack?.let { track ->
+//            val id = track.uri.hashCode()
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val count = viewModel.checkFavorite(id)
+//                withContext(Dispatchers.Main) {
+//                    if (count != null && count > 0) {
+//                        _isChecked = true
+//                    } else {
+//                        _isChecked = false
+//                    }
+//                    binding.toggleFavorite.isChecked = _isChecked
+//                }
+//            }
+//        }
+//    }
 
     @SuppressLint("SetTextI18n")
     override fun setupObservers() {

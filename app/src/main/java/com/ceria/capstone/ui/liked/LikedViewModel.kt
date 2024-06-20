@@ -1,33 +1,60 @@
 package com.ceria.capstone.ui.liked
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
-import com.ceria.capstone.data.roomfavorite.FavoriteDao
-import com.ceria.capstone.data.roomfavorite.FavoriteDatabase
-import com.ceria.capstone.data.roomfavorite.FavoriteEntity
+import com.ceria.capstone.data.Result
+import com.ceria.capstone.domain.model.SongDTO
+import com.ceria.capstone.domain.usecase.FavoriteUseCase
+import com.ceria.capstone.domain.usecase.GetFavoriteSongsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LikedViewModel(application: Application) : AndroidViewModel(application) {
-    private var userDao: FavoriteDao?
-    private var userDb: FavoriteDatabase?
+@HiltViewModel
+class LikedViewModel @Inject constructor(
+    private val getFavoriteSongsUseCase: GetFavoriteSongsUseCase,
+    private val favoriteUseCase: FavoriteUseCase
+) :
+    ViewModel() {
+    private val _songs = MutableLiveData<Result<List<SongDTO>>>()
+    val songs = _songs as LiveData<Result<List<SongDTO>>>
 
-    init {
-        userDb = FavoriteDatabase.getDatabase(application)
-        userDao = userDb?.favoriteuserDao()
-    }
-
-    fun getfavoriteuser(): LiveData<List<FavoriteEntity>>? {
-        return userDao?.getfavoriteuser()
-    }
-    fun removeFavorite(favoriteEntity: FavoriteEntity) {
+    fun getFavoriteSongs() {
         viewModelScope.launch {
-            userDao?.remove(favoriteEntity.id)
+            getFavoriteSongsUseCase.getFavoriteSongs().asFlow().collect {
+                _songs.postValue(it)
+            }
         }
     }
-    fun getFavoriteCountSync(): Int {
-         return userDao?.getFavoriteCountSync() ?: 0
+
+    fun addSongToFavorite(song: SongDTO) {
+        viewModelScope.launch {
+            favoriteUseCase.addSongToFavorite(song)
+        }
     }
 
+    fun removeSongFromFavorite(song: SongDTO) {
+        viewModelScope.launch {
+            favoriteUseCase.removeSongFromFavorite(song)
+        }
+    }
+//    private var userDao: FavoriteDao?
+//    private var userDb: FavoriteDatabase?
+//
+//    init {
+//        userDb = FavoriteDatabase.getDatabase(application)
+//        userDao = userDb?.favoriteuserDao()
+//    }
+//
+//    fun getfavoriteuser(): LiveData<List<FavoriteEntity>>? {
+//        return userDao?.getfavoriteuser()
+//    }
+//    fun removeFavorite(favoriteEntity: FavoriteEntity) {
+//        viewModelScope.launch {
+//            userDao?.remove(favoriteEntity.id)
+//        }
+//    }
 }

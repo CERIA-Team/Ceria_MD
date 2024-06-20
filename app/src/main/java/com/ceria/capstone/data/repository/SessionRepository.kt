@@ -3,8 +3,11 @@ package com.ceria.capstone.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import com.ceria.capstone.data.Result
+import com.ceria.capstone.data.local.room.FavoriteDatabase
+import com.ceria.capstone.data.local.room.FavoriteEntity
 import com.ceria.capstone.data.remote.service.CeriaApiService
 import com.ceria.capstone.data.remote.service.SpotifyApiService
+import com.ceria.capstone.domain.model.SessionDTO
 import com.ceria.capstone.domain.model.SongDTO
 import com.ceria.capstone.domain.repository.ISessionRepository
 import timber.log.Timber
@@ -13,7 +16,9 @@ import javax.inject.Singleton
 
 @Singleton
 class SessionRepository @Inject constructor(
-    private val ceriaApiService: CeriaApiService, private val spotifyApiService: SpotifyApiService
+    private val ceriaApiService: CeriaApiService,
+    private val spotifyApiService: SpotifyApiService,
+    private val favoriteDatabase: FavoriteDatabase
 ) : ISessionRepository {
     override suspend fun startSession(): LiveData<Result<String>> = liveData {
         emit(Result.Loading)
@@ -48,7 +53,6 @@ class SessionRepository @Inject constructor(
     override suspend fun getSessionDetail(id: String): LiveData<Result<List<SongDTO>>> = liveData {
         emit(Result.Loading)
         try {
-            Timber.d("Woi")
             val ceriaResponse = ceriaApiService.getSessionDetail(id)
             if (ceriaResponse.data != null && ceriaResponse.data.sessions.isNotEmpty()) {
                 val songIds = ceriaResponse.data.sessions.joinToString(",") {
@@ -56,7 +60,8 @@ class SessionRepository @Inject constructor(
                 }
                 val spotifyResponse = spotifyApiService.getTracks(songIds)
                 val songs = spotifyResponse.tracks.map {
-                    SongDTO(it)
+                    val fav = favoriteDatabase.favoriteDao().isSongFavorite(it.id)
+                    SongDTO(it, fav)
                 }
                 emit(Result.Success(songs))
             } else {
@@ -67,6 +72,22 @@ class SessionRepository @Inject constructor(
         }
     }
 
+    override suspend fun getAllSessions(): LiveData<Result<List<SessionDTO>>> = liveData {
+        emit(Result.Loading)
+        try {
+            val response = ceriaApiService.getListeningSessions()
+            if (!response.data.isNullOrEmpty()) {
+                val sessions = response.data.map {
+                    SessionDTO(it)
+                }
+                emit(Result.Success(sessions))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
+
     override suspend fun getNextQueue(): LiveData<Result<SongDTO>> = liveData {
         emit(Result.Loading)
         try {
@@ -74,9 +95,38 @@ class SessionRepository @Inject constructor(
             if (response.queue.isEmpty()) {
                 emit(Result.Empty)
             } else {
-                val song = SongDTO(response.queue[0])
+                val isLiked = favoriteDatabase.favoriteDao().isSongFavorite(response.queue[0].id)
+                val song = SongDTO(response.queue[0], isLiked)
                 emit(Result.Success(song))
             }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
+    override suspend fun addSongToFavorite(song: SongDTO) {
+        try {
+            favoriteDatabase.favoriteDao().addSongToFavorite(FavoriteEntity(song))
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
+    }
+
+    override suspend fun removeSongFromFavorite(song: SongDTO) {
+        try {
+            favoriteDatabase.favoriteDao().removeSongFromFavorite(song.id)
+        } catch (e: Exception) {
+            Timber.e(e.message)
+        }
+    }
+
+    override suspend fun getFavoriteSongs(): LiveData<Result<List<SongDTO>>> = liveData {
+        emit(Result.Loading)
+        try {
+            val songs = favoriteDatabase.favoriteDao().getFavoriteSongs().map {
+                SongDTO(it)
+            }
+            emit(Result.Success(songs))
         } catch (e: Exception) {
             emit(Result.Error(e.message.toString()))
         }

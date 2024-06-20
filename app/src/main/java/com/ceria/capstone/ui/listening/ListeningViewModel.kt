@@ -3,9 +3,6 @@ package com.ceria.capstone.ui.listening
 import android.app.Application
 import androidx.lifecycle.*
 import com.ceria.capstone.data.Result
-import com.ceria.capstone.data.roomfavorite.FavoriteDao
-import com.ceria.capstone.data.roomfavorite.FavoriteDatabase
-import com.ceria.capstone.data.roomfavorite.FavoriteEntity
 import com.ceria.capstone.domain.model.SongDTO
 import com.ceria.capstone.domain.usecase.GetNextQueueUseCase
 import com.ceria.capstone.domain.usecase.GetSongRecommendationsUseCase
@@ -33,15 +30,15 @@ class ListeningViewModel @Inject constructor(
     private val _recommendations = MutableLiveData<Result<List<String>>>()
     val recommendations: LiveData<Result<List<String>>> = _recommendations
 
-    private val favoriteDao: FavoriteDao
-
-
-    init {
-        val favoriteDb = FavoriteDatabase.getDatabase(application)
-        favoriteDao = favoriteDb.favoriteuserDao()
-
-
-    }
+//    private val favoriteDao: FavoriteDao
+//
+//
+//    init {
+//        val favoriteDb = FavoriteDatabase.getDatabase(application)
+//        favoriteDao = favoriteDb.favoriteuserDao()
+//
+//
+//    }
 
     fun setCurrentHeartRate(value: Int) {
         _currentHeartRate.value = value
@@ -71,25 +68,48 @@ class ListeningViewModel @Inject constructor(
         }
     }
 
-    fun insertFavorite(username: String, id: Int, album: String, avatarUrl: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val user = FavoriteEntity(
-                id = id,
-                username = username,
-                album = album,
-                avatarurl = avatarUrl
-            )
-            favoriteDao.insert(user)
-        }
-    }
-
-    fun checkFavorite(id: Int) = favoriteDao.checkuser(id)
-
-    fun removeFavorite(id: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            favoriteDao.remove(id)
-        }
-    }
-
 
 }
+// import android.app.Application
+// import androidx.lifecycle.AndroidViewModel
+// import com.ceria.capstone.data.local.room.FavoriteDao
+// import com.ceria.capstone.data.local.room.FavoriteDatabase
+// import com.ceria.capstone.data.local.room.FavoriteEntity
+// import com.ceria.capstone.data.roomsummary.SummaryDao
+// import com.ceria.capstone.data.roomsummary.SummaryDatabase
+// import com.ceria.capstone.data.roomsummary.SummaryEntity
+// import com.spotify.protocol.types.Track
+// import kotlinx.coroutines.CoroutineScope
+// import kotlinx.coroutines.Dispatchers
+// import kotlinx.coroutines.launch
+
+// class ListeningViewModel(application: Application) : AndroidViewModel(application) {
+//     private val userDao: FavoriteDao
+//     private val userDb: FavoriteDatabase
+//     private val userDao2: SummaryDao
+//     private val userDb2: SummaryDatabase
+
+//     init {
+//         userDb = FavoriteDatabase.getDatabase(application)
+//         userDao = userDb.favoriteuserDao()
+//         userDb2 = SummaryDatabase.getDatabase(application)
+//         userDao2 = userDb2.songDao()
+//     }
+
+//     fun insert(username: String, id: Int, album: String, avatarUrl: String) {
+//         CoroutineScope(Dispatchers.IO).launch {
+//             val user = FavoriteEntity(
+//                 id,
+//                 username,
+//                 album,
+//                 avatarUrl
+//             )
+//             userDao.insert(user)
+//         }
+//     }
+
+//     fun checkUser(id: Int) = userDao.checkuser(id)
+
+
+
+// }

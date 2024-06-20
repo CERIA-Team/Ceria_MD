@@ -18,6 +18,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     override fun initData() {
         viewModel.getProfile()
+        viewModel.getFavoriteSongs()
     }
 
     override fun setupUI() {
@@ -63,12 +64,16 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 }
             }
         }
-        viewModel.favoriteCount.observe(viewLifecycleOwner) { count ->
-            Log.d("ProfileFragment", "Favorite Count: $count")
-            binding.textView3.text = resources.getQuantityString(R.plurals.favorite_count_plural, count, count)
+        viewModel.countFavorite.observe(viewLifecycleOwner) {
+            when (it) {
+                Result.Empty -> {}
+                is Result.Error -> {}
+                Result.Loading -> {}
+                is Result.Success -> {
+                    binding.tvLikedCount.text = getString(R.string.n_songs, it.data.size)
+                }
+            }
         }
-
-        viewModel.getFavoriteCount()
     }
 
 }

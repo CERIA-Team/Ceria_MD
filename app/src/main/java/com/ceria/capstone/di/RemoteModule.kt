@@ -1,7 +1,7 @@
 package com.ceria.capstone.di
 
 import com.ceria.capstone.BuildConfig
-import com.ceria.capstone.data.local.SessionManager
+import com.ceria.capstone.data.local.datastore.SessionManager
 import com.ceria.capstone.data.remote.interceptor.CeriaTokenInterceptor
 import com.ceria.capstone.data.remote.interceptor.SpotifyTokenInterceptor
 import com.ceria.capstone.data.remote.service.CeriaApiService
